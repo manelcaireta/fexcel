@@ -67,14 +67,14 @@ def fake_values(schema: dict[str, str]) -> Iterator[dict[str, str]]:
                         datetime(year=MIN_YEAR, month=1, day=1)
                         + fake.time_delta(datetime.now() + timedelta(days=365))
                     )
-                    #.replace(microsecond=0)
+                    # .replace(microsecond=0)
                     .isoformat()
                 )
             elif lower_value.startswith("datetime>"):
                 name = lower_value.split(">")[1].strip()
                 record[key] = (
                     (datetime.fromisoformat(record[name]) + fake.time_delta())
-                    #.replace(microsecond=0)
+                    # .replace(microsecond=0)
                     .isoformat()
                 )
             elif lower_value == "text":

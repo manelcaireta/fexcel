@@ -3,9 +3,10 @@ name = "fake-excel"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+authors = [{ name = "Manel Caireta", email = "m.caireta@altostratus.es" }]
 requires-python = ">=3.11"
-dependencies = [
-    "faker>=36.2.2",
-    "pyexcel>=0.7.1",
-    "pyexcel-xlsx>=0.6.1",
-]
+dependencies = ["faker>=36.2.2", "pyexcel>=0.7.1", "pyexcel-xlsx>=0.6.1"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
