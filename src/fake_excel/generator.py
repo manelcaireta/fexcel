@@ -28,14 +28,14 @@ class ExcelFieldFaker:
     def __init__(self, field_name: str, field_type: str) -> None:
         self.name = field_name
         self._type = field_type.lower()
-        self._record_creator = None
+        self._value_creator = None
 
-    def get_record(self) -> str:
-        if self._record_creator is None:
-            self._record_creator = self._get_record_creator()
-        return str(self._record_creator())
+    def get_value(self) -> str:
+        if self._value_creator is None:
+            self._value_creator = self._get_value_creator()
+        return str(self._value_creator())
 
-    def _get_record_creator(self) -> Callable[[], str]:
+    def _get_value_creator(self) -> Callable[[], str]:
         return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
 
 
@@ -43,9 +43,9 @@ class ExcelFaker:
     def __init__(self, schema: list[dict[str, str]]) -> None:
         self._schema = schema
 
-    def create_fake_excel(self) -> Iterator[dict[str, str]]:
+    def get_fake_records(self) -> Iterator[dict[str, str]]:
         while True:
-            yield {field.name: field.get_record() for field in self.get_fields()}
+            yield {field.name: field.get_value() for field in self.get_fields()}
 
     def get_fields(self) -> list[ExcelFieldFaker]:
         return [self._parse_field(field) for field in self._schema]
