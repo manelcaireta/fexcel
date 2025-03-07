@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from fake_excel.generator import ExcelFaker
+from fake_excel.generator import ExcelFaker, ExcelFieldFaker
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
@@ -28,3 +28,35 @@ def test_incorrect_schema() -> None:
 
     with pytest.raises(ValueError, match=f"Unprocessable field {invalid_field}"):
         _ = ExcelFaker([invalid_field])
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        [
+            {"name": "field1", "type": "text"},
+        ],
+        [
+            {"name": "field1", "type": "text"},
+            {"name": "field2", "type": "text"},
+        ],
+        [
+            {"name": "field1", "type": "text"},
+            {"name": "field2", "type": "text"},
+            {"name": "field3", "type": "text"},
+        ],
+        [
+            {"name": "field1", "type": "text"},
+            {"name": "field2", "type": "text"},
+            {"name": "field3", "type": "text"},
+            {"name": "field4", "type": "text"},
+            {"name": "field5", "type": "text"},
+        ],
+    ],
+)
+def test_field_parsing(fields: list) -> None:
+    excel_faker = ExcelFaker(fields)
+
+    assert isinstance(excel_faker.fields, list)
+    assert len(excel_faker.fields) == len(fields)
+    assert all(isinstance(field, ExcelFieldFaker) for field in excel_faker.fields)
