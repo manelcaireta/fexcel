@@ -1,5 +1,6 @@
 import json
 from collections.abc import Callable
+from itertools import repeat
 from pathlib import Path
 from typing import Iterator, Self
 
@@ -73,8 +74,10 @@ class ExcelFaker:
         except KeyError as err:
             raise ValueError(f"Unprocessable field {field}") from err
 
-    def get_fake_records(self) -> Iterator[dict[str, str]]:
-        while True:
+    def get_fake_records(self, n: int | None) -> Iterator[dict[str, str]]:
+        generator = range(n) if n is not None else repeat(None)
+
+        for _ in generator:
             yield {field.name: field.get_value() for field in self._fields}
 
     def __eq__(self, other: object) -> bool:
