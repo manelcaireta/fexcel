@@ -60,3 +60,14 @@ def test_field_parsing(fields: list) -> None:
     assert isinstance(excel_faker.fields, list)
     assert len(excel_faker.fields) == len(fields)
     assert all(isinstance(field, ExcelFieldFaker) for field in excel_faker.fields)
+
+
+def test_create_from_file(schemas_path: Path) -> None:
+    with (schemas_path / "test.json").open("r") as f:
+        json_schema = json.load(f)
+    expected_faker = ExcelFaker(json_schema.get("schema"))
+
+    actual_faker = ExcelFaker.from_file(schemas_path / "test.json")
+
+    assert isinstance(actual_faker, ExcelFaker)
+    assert actual_faker == expected_faker
