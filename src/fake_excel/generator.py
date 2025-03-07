@@ -15,7 +15,7 @@ type_to_generator = {
     "datetime": fake.date_time,
     "text": fake.text,
     "integer": fake.random_int,
-    "float": fake.random_number,
+    "float": lambda: fake.random_number() / (fake.random_number() or 10),
     "boolean": fake.boolean,
     "url": fake.url,
     "ipv4": fake.ipv4,
