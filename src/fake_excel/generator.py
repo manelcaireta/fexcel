@@ -1,5 +1,7 @@
+import json
 from collections.abc import Callable
-from typing import Iterator
+from pathlib import Path
+from typing import Iterator, Self
 
 from faker import Faker
 
@@ -38,11 +40,23 @@ class ExcelFieldFaker:
     def _get_value_creator(self) -> Callable[[], str]:
         return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
 
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, ExcelFieldFaker):
+            return False
+        return self.name == value.name and self._type == value._type
+
 
 class ExcelFaker:
     def __init__(self, schema: list[dict[str, str]]) -> None:
         self._schema = schema
         self._fields = self._parse_fields()
+
+    @classmethod
+    def from_file(cls, file: str | Path) -> Self:
+        file = Path(file)
+        with file.open("r") as fp:
+            schema = json.load(fp)
+        return cls(schema["schema"])
 
     @property
     def fields(self) -> list[ExcelFieldFaker]:
@@ -62,3 +76,8 @@ class ExcelFaker:
     def get_fake_records(self) -> Iterator[dict[str, str]]:
         while True:
             yield {field.name: field.get_value() for field in self._fields}
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ExcelFaker):
+            return False
+        return self.fields == other.fields
