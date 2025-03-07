@@ -42,12 +42,13 @@ class ExcelFieldFaker:
 class ExcelFaker:
     def __init__(self, schema: list[dict[str, str]]) -> None:
         self._schema = schema
+        self._fields = self._parse_fields()
 
-    def get_fake_records(self) -> Iterator[dict[str, str]]:
-        while True:
-            yield {field.name: field.get_value() for field in self.get_fields()}
+    @property
+    def fields(self) -> list[ExcelFieldFaker]:
+        return self._fields
 
-    def get_fields(self) -> list[ExcelFieldFaker]:
+    def _parse_fields(self) -> list[ExcelFieldFaker]:
         return [self._parse_field(field) for field in self._schema]
 
     def _parse_field(self, field: dict[str, str]) -> ExcelFieldFaker:
@@ -57,3 +58,7 @@ class ExcelFaker:
             return ExcelFieldFaker(field_name, field_type)
         except KeyError as err:
             raise ValueError(f"Unprocessable field {field}") from err
+
+    def get_fake_records(self) -> Iterator[dict[str, str]]:
+        while True:
+            yield {field.name: field.get_value() for field in self._fields}
