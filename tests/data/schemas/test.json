@@ -1,0 +1,60 @@
+{
+  "schema": [
+    {
+      "name": "id",
+      "type": "UUID"
+    },
+    {
+      "name": "department",
+      "type": "ENUM",
+      "values": [
+        "GLOBAL THREAT INTELLIGENCE",
+        "COMMUNICATIONS AND REPORTING",
+        "CYBER PLATFORMS",
+        "SecOps ASSURANCE"
+      ]
+    },
+    {
+      "name": "feedback",
+      "type": "ENUM",
+      "values": ["Enquiry", "Complaint", "Request", "Query"]
+    },
+    {
+      "name": "status",
+      "type": "ENUM",
+      "values": ["SOLVED", "PENDING"]
+    },
+    {
+      "name": "created_at",
+      "type": "DATETIME"
+    },
+    {
+      "name": "due_date",
+      "type": "DATETIME"
+    },
+    {
+      "name": "finished_date",
+      "type": "DATETIME"
+    },
+    {
+      "name": "service",
+      "type": "ENUM",
+      "values": [
+        "Threat intelligence Request",
+        "Threat Intelligence Monitoring",
+        "Cyber Platforms",
+        "SecOps Assurance",
+        "Global Evolution discovery"
+      ]
+    },
+    {
+      "name": "category",
+      "type": "ENUM",
+      "values": ["Local", "Third Party"]
+    },
+    {
+      "name": "location",
+      "type": "LOCATION"
+    }
+  ]
+}
