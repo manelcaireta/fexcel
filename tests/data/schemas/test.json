@@ -1,69 +1,76 @@
-{
-  "schema": [
-    {
-      "name": "id",
-      "type": "UUID"
-    },
-    {
-      "name": "department",
-      "type": "ENUM",
-      "values": [
+[
+  {
+    "name": "id",
+    "type": "UUID"
+  },
+  {
+    "name": "department",
+    "type": "TEXT",
+    "constraints": {
+      "allowed_values": [
         "GLOBAL THREAT INTELLIGENCE",
         "COMMUNICATIONS AND REPORTING",
         "CYBER PLATFORMS",
         "SecOps ASSURANCE"
       ]
-    },
-    {
-      "name": "feedback",
-      "type": "ENUM",
-      "values": ["Enquiry", "Complaint", "Request", "Query"]
-    },
-    {
-      "name": "status",
-      "type": "ENUM",
-      "values": ["SOLVED", "PENDING"]
-    },
-    {
-      "name": "created_at",
-      "type": "DATETIME"
-    },
-    {
-      "name": "due_date",
-      "type": "DATETIME"
-    },
-    {
-      "name": "finished_date",
-      "type": "DATETIME"
-    },
-    {
-      "name": "service",
-      "type": "ENUM",
-      "values": [
+    }
+  },
+  {
+    "name": "feedback",
+    "type": "TEXT",
+    "constraints": {
+      "allowed_values": ["Enquiry", "Complaint", "Request", "Query"]
+    }
+  },
+  {
+    "name": "status",
+    "type": "TEXT",
+    "constraints": {
+      "allowed_values": ["SOLVED", "PENDING"]
+    }
+  },
+  {
+    "name": "created_at",
+    "type": "DATETIME"
+  },
+  {
+    "name": "due_date",
+    "type": "DATETIME"
+  },
+  {
+    "name": "finished_date",
+    "type": "DATETIME"
+  },
+  {
+    "name": "service",
+    "type": "TEXT",
+    "constraints": {
+      "allowed_values": [
         "Threat intelligence Request",
         "Threat Intelligence Monitoring",
         "Cyber Platforms",
         "SecOps Assurance",
         "Global Evolution discovery"
       ]
-    },
-    {
-      "name": "category",
-      "type": "ENUM",
-      "values": ["Local", "Third Party"]
-    },
-    {
-      "name": "location",
-      "type": "LOCATION"
-    },
-    {
-      "name": "cost",
-      "type": "INTEGER"
-    },
-    {
-      "name": "revenue",
-      "type": "INTEGER"
     }
-  ],
-  "constraints": ""
-}
+  },
+  {
+    "name": "category",
+    "type": "TEXT",
+    "constraints": {
+      "allowed_values": ["Local", "Third Party"]
+    }
+  },
+  {
+    "name": "location",
+    "type": "LOCATION"
+  },
+  {
+    "name": "cost",
+    "type": "INTEGER"
+  },
+  {
+    "name": "revenue",
+    "type": "INTEGER"
+  }
+]
