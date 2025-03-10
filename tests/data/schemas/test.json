@@ -57,8 +57,13 @@
       "type": "LOCATION"
     },
     {
-      "cost": "INTEGER",
-      
+      "name": "cost",
+      "type": "INTEGER"
+    },
+    {
+      "name": "revenue",
+      "type": "INTEGER"
     }
-  ]
+  ],
+  "constraints": ""
 }
