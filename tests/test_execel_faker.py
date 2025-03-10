@@ -4,14 +4,15 @@ from pathlib import Path
 
 import pytest
 
-from fake_excel.generator import ExcelFaker, ExcelFieldFaker
+from fake_excel.field import ExcelFieldFaker
+from fake_excel.generator import ExcelFaker
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
     with (schemas_path / "test.json").open("r") as f:
         json_schema = json.load(f)
 
-    excel_faker = ExcelFaker(json_schema.get("schema"))
+    excel_faker = ExcelFaker(json_schema)
     iterator = excel_faker.get_fake_records()
 
     assert isinstance(iterator, Iterator)

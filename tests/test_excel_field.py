@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from fake_excel.generator import ExcelFieldFaker
+from fake_excel.field import ExcelFieldFaker
 
 
 @dataclass
