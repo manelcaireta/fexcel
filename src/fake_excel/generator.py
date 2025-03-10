@@ -2,7 +2,7 @@ import json
 from collections.abc import Callable
 from itertools import repeat
 from pathlib import Path
-from typing import Iterator, Self
+from typing import Any, Iterator, Self
 
 from faker import Faker
 
@@ -17,6 +17,7 @@ type_to_generator = {
     "time": fake.time,
     "datetime": fake.date_time,
     "text": fake.text,
+    "int": fake.random_int,
     "integer": fake.random_int,
     "float": lambda: fake.random_number() / (fake.random_number() or 10),
     "boolean": fake.boolean,
@@ -24,14 +25,21 @@ type_to_generator = {
     "ipv4": fake.ipv4,
     "ipv6": fake.ipv6,
     "uuid": fake.uuid4,
+    "location": fake.locale,
 }
 
 
 class ExcelFieldFaker:
-    def __init__(self, field_name: str, field_type: str) -> None:
+    def __init__(
+        self,
+        field_name: str,
+        field_type: str,
+        allowed_values: list[str] | None = None,
+    ) -> None:
         self.name = field_name
         self._type = field_type.lower()
         self._value_creator = None
+        self._values = allowed_values
 
     def get_value(self) -> str:
         if self._value_creator is None:
@@ -39,6 +47,9 @@ class ExcelFieldFaker:
         return str(self._value_creator())
 
     def _get_value_creator(self) -> Callable[[], str]:
+        if self._values is not None:
+            values = self._values.copy()
+            return lambda: fake.random_element(values)
         return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
 
     def __eq__(self, value: object) -> bool:
@@ -66,16 +77,17 @@ class ExcelFaker:
     def _parse_fields(self) -> list[ExcelFieldFaker]:
         return [self._parse_field(field) for field in self._schema]
 
-    def _parse_field(self, field: dict[str, str]) -> ExcelFieldFaker:
+    def _parse_field(self, field: dict[str, Any]) -> ExcelFieldFaker:
         try:
             field_name = field["name"]
             field_type = field["type"]
-            return ExcelFieldFaker(field_name, field_type)
+            allowed_values = field.get("values")
+            return ExcelFieldFaker(field_name, field_type, allowed_values)
         except KeyError as err:
             raise ValueError(f"Unprocessable field {field}") from err
 
-    def get_fake_records(self, n: int | None) -> Iterator[dict[str, str]]:
-        generator = range(n) if n is not None else repeat(None)
+    def get_fake_records(self, n: int | None = None) -> Iterator[dict[str, str]]:
+        generator = repeat(None, n) if n is not None else repeat(None)
 
         for _ in generator:
             yield {field.name: field.get_value() for field in self._fields}
