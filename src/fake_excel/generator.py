@@ -86,7 +86,7 @@ class ExcelFaker:
             raise ValueError(f"Unprocessable field {field}") from err
 
     def get_fake_records(self, n: int | None = None) -> Iterator[dict[str, str]]:
-        generator = range(n) if n is not None else repeat(None)
+        generator = repeat(None, n) if n is not None else repeat(None)
 
         for _ in generator:
             yield {field.name: field.get_value() for field in self._fields}
