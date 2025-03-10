@@ -17,6 +17,7 @@ type_to_generator = {
     "time": fake.time,
     "datetime": fake.date_time,
     "text": fake.text,
+    "int": fake.random_int,
     "integer": fake.random_int,
     "float": lambda: fake.random_number() / (fake.random_number() or 10),
     "boolean": fake.boolean,
