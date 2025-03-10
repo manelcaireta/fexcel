@@ -2,6 +2,8 @@ from collections.abc import Callable
 
 from faker import Faker
 
+from fake_excel.constraint import FieldConstraint
+
 fake = Faker()
 
 type_to_generator = {
@@ -30,12 +32,13 @@ class ExcelFieldFaker:
         self,
         field_name: str,
         field_type: str,
-        allowed_values: list[str] | None = None,
+        field_constraints: FieldConstraint,
     ) -> None:
         self.name = field_name
         self._type = field_type.lower()
         self._value_creator = None
-        self._values = allowed_values
+        self._constraints = field_constraints
+        self._last_value = None
 
     def get_value(self) -> str:
         if self._value_creator is None:
@@ -43,8 +46,8 @@ class ExcelFieldFaker:
         return str(self._value_creator())
 
     def _get_value_creator(self) -> Callable[[], str]:
-        if self._values is not None:
-            values = self._values.copy()
+        if self._constraints.allowed_values is not None:
+            values = self._constraints.allowed_values.copy()
             return lambda: fake.random_element(values)
         return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
 

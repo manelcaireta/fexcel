@@ -3,6 +3,7 @@ from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
+from fake_excel.constraint import FieldConstraint
 from fake_excel.field import ExcelFieldFaker
 
 
@@ -29,8 +30,12 @@ class ExcelFaker:
         try:
             field_name = field["name"]
             field_type = field["type"]
-            allowed_values = field.get("values")
-            return ExcelFieldFaker(field_name, field_type, allowed_values)
+            constraints = field.get("values", {})
+            return ExcelFieldFaker(
+                field_name,
+                field_type,
+                FieldConstraint(**constraints),
+            )
         except KeyError as err:
             raise ValueError(f"Unprocessable field {field}") from err
 
