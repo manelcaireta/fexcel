@@ -66,7 +66,7 @@ def test_field_parsing(fields: list) -> None:
 def test_create_from_file(schemas_path: Path) -> None:
     with (schemas_path / "test.json").open("r") as f:
         json_schema = json.load(f)
-    expected_faker = ExcelFaker(json_schema.get("schema"))
+    expected_faker = ExcelFaker(json_schema)
 
     actual_faker = ExcelFaker.from_file(schemas_path / "test.json")
 
