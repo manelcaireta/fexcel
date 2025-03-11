@@ -26,7 +26,7 @@ test_cases = [
         name="age",
         type="INTEGER",
         constraints=NumericConstraint(min_value=0, max_value=100),
-        expected_pattern=r"^[0-9]*$",
+        expected_pattern=r"^[-+]?[0-9]*$",
     ),
     TestCase(
         name="email",
@@ -68,7 +68,7 @@ test_cases = [
         name="float",
         type="FLOAT",
         constraints=FieldConstraint(),
-        expected_pattern=r"^[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
+        expected_pattern=r"^[-+]?[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
     ),
     TestCase(
         name="enum",
