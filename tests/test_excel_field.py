@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from fake_excel.constraint import FieldConstraint
+from fake_excel.constraint import FieldConstraint, NumericConstraint
 from fake_excel.field import ExcelFieldFaker
 
 
@@ -25,7 +25,7 @@ test_cases = [
     TestCase(
         name="age",
         type="INTEGER",
-        constraints=FieldConstraint(),
+        constraints=NumericConstraint(min_value=0, max_value=100),
         expected_pattern=r"^[0-9]*$",
     ),
     TestCase(
@@ -87,4 +87,14 @@ def test_excel_field_generation(test_table: TestCase) -> None:
         test_table.constraints,
     ).get_value()
     expected = re.compile(test_table.expected_pattern)
+
     assert re.match(expected, value) is not None
+
+    if test_table.constraints.allowed_values is not None:
+        assert value in test_table.constraints.allowed_values
+
+    if isinstance(test_table.constraints, NumericConstraint):
+        if test_table.constraints.min_value is not None:
+            assert test_table.constraints.min_value <= int(value)
+        if test_table.constraints.max_value is not None:
+            assert int(value) <= test_table.constraints.max_value
