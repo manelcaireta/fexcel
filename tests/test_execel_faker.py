@@ -70,3 +70,17 @@ def test_create_from_file(schemas_path: Path) -> None:
 
     assert isinstance(actual_faker, ExcelFaker)
     assert actual_faker == expected_faker
+
+
+def test_excel_faker_equality() -> None:
+    fields = [
+        {"name": "field1", "type": "text"},
+        {"name": "field2", "type": "text"},
+        {"name": "field3", "type": "text"},
+    ]
+    faker1 = ExcelFaker(fields)
+    faker2 = ExcelFaker(fields)
+
+    assert faker1 == faker2
+    assert faker1 is not faker2
+    assert faker1 != "This is not an ExcelFaker instance"

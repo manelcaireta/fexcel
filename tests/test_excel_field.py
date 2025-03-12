@@ -98,3 +98,12 @@ def test_excel_field_generation(test_table: TestCase) -> None:
             assert test_table.constraints.min_value <= int(value)
         if test_table.constraints.max_value is not None:
             assert int(value) <= test_table.constraints.max_value
+
+
+def test_excel_fields_equality() -> None:
+    faker = ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+
+    assert faker == ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+    assert faker is not ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+    assert faker != ExcelFieldFaker("Test", "TEXT", FieldConstraint())
+    assert faker != "Not a FieldFaker instance"
