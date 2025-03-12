@@ -1,3 +1,8 @@
+from itertools import repeat
+from types import NoneType
+from typing import Iterator
+
+
 class FieldConstraint:
     def __init__(self, allowed_values: list | None = None) -> None:
         self.allowed_values = allowed_values
@@ -6,10 +11,22 @@ class FieldConstraint:
 class NumericConstraint(FieldConstraint):
     def __init__(
         self,
-        min_value: float | None = None,
-        max_value: float | None = None,
+        min_value: float | Iterator[float | None] | None = None,
+        max_value: float | Iterator[float | None] | None = None,
         allowed_values: list[float] | None = None,
     ) -> None:
-        self.min_value = min_value
-        self.max_value = max_value
+        if isinstance(min_value, (int, float, NoneType)):
+            min_value = repeat(min_value)
+        if isinstance(max_value, (int, float, NoneType)):
+            max_value = repeat(max_value)
+        self._min_value = min_value
+        self._max_value = max_value
         super().__init__(allowed_values)
+
+    @property
+    def min_value(self) -> float | None:
+        return next(self._min_value)
+
+    @property
+    def max_value(self) -> float | None:
+        return next(self._min_value)
