@@ -6,9 +6,9 @@ class FieldConstraint:
 class NumericConstraint(FieldConstraint):
     def __init__(
         self,
-        min_value: int | None = None,
-        max_value: int | None = None,
-        allowed_values: list[int] | None = None,
+        min_value: float | None = None,
+        max_value: float | None = None,
+        allowed_values: list[float] | None = None,
     ) -> None:
         self.min_value = min_value
         self.max_value = max_value
