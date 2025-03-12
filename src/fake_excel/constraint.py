@@ -4,11 +4,22 @@ from typing import Iterator
 
 
 class FieldConstraint:
+    """
+    Base constraint to apply to a Field.
+
+    It only contains the `allowed_values` option
+    which is shared across all posible types.
+    """
+
     def __init__(self, allowed_values: list | None = None) -> None:
         self.allowed_values = allowed_values
 
 
 class NumericConstraint(FieldConstraint):
+    """
+    Numerical constraint. It represents constraints for float or int types.
+    """
+
     def __init__(
         self,
         min_value: float | Iterator[float | None] | None = None,
