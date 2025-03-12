@@ -41,3 +41,10 @@ class NumericConstraint(FieldConstraint):
     @property
     def max_value(self) -> float | None:
         return next(self._min_value)
+
+    def __str__(self) -> str:
+        return (
+            f"{{allowed_values={self.allowed_values} "
+            f"min_value={self.min_value} "
+            f"max_value={self.max_value}}}"
+        )

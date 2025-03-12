@@ -97,3 +97,10 @@ class ExcelFieldFaker:
         if not isinstance(value, ExcelFieldFaker):
             return False
         return self.name == value.name and self._type == value._type
+
+    def __str__(self) -> str:
+        return (
+            f"{self.__class__.__name__}(name={self.name} "
+            f"type={self._type} "
+            f"constraints={self._constraints})"
+        )
