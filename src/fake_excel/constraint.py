@@ -14,6 +14,9 @@ class FieldConstraint:
     def __init__(self, allowed_values: list | None = None) -> None:
         self.allowed_values = allowed_values
 
+    def __str__(self) -> str:
+        return f"{{allowed_values={self.allowed_values}}}"
+
 
 class NumericConstraint(FieldConstraint):
     """
@@ -40,7 +43,7 @@ class NumericConstraint(FieldConstraint):
 
     @property
     def max_value(self) -> float | None:
-        return next(self._min_value)
+        return next(self._max_value)
 
     def __str__(self) -> str:
         return (
