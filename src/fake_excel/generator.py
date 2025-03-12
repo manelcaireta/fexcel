@@ -3,7 +3,7 @@ from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
-from fake_excel.constraint import FieldConstraint
+from fake_excel.constraint import FieldConstraint, NumericConstraint
 from fake_excel.field import ExcelFieldFaker
 
 
@@ -30,11 +30,14 @@ class ExcelFaker:
         try:
             field_name = field["name"]
             field_type = field["type"]
-            constraints = field.get("values", {})
+            constraints = self._parse_constraints(
+                field.get("constraints", {}),
+                field_type,
+            )
             return ExcelFieldFaker(
                 field_name,
                 field_type,
-                FieldConstraint(**constraints),
+                constraints,
             )
         except KeyError as err:
             raise ValueError(f"Unprocessable field {field}") from err
@@ -49,3 +52,19 @@ class ExcelFaker:
         if not isinstance(other, ExcelFaker):
             return False
         return self.fields == other.fields
+
+    def _parse_constraints(
+        self,
+        constraint: dict[str, Any],
+        field_type: str,
+    ) -> FieldConstraint:
+        if field_type.lower() in ["int", "float", "integer"]:
+            return NumericConstraint(**constraint)
+        return FieldConstraint(**constraint)
+
+    def __str__(self) -> str:
+        ret = "ExcelFaker(\n"
+        for field in self.fields:
+            ret += f"\t{field}\n"
+        ret += ")"
+        return ret
