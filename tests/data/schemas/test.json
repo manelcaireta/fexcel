@@ -67,7 +67,11 @@
   },
   {
     "name": "cost",
-    "type": "INTEGER"
+    "type": "INTEGER",
+    "constraints": {
+      "min_value": 0,
+      "max_value": 1000
+    }
   },
   {
     "name": "revenue",
