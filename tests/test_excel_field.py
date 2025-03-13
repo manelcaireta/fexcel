@@ -48,7 +48,10 @@ test_cases = [
     TestCase(
         name="date",
         type="DATE",
-        constraints=FieldConstraint(),
+        constraints=TemporalConstraint(
+            min_value="2021-01-01T00:00:00",
+            max_value="2021-12-31T00:00:00",
+        ),
         expected_pattern=r"^\d{4}-\d{2}-\d{2}$",
     ),
     TestCase(
@@ -61,8 +64,8 @@ test_cases = [
         name="datetime",
         type="DATETIME",
         constraints=TemporalConstraint(
-            min_date="2021-01-01T00:00:00",
-            max_date="2021-12-31T00:00:00",
+            min_value=datetime.fromisoformat("2021-01-01T00:00:00"),
+            max_value=datetime.fromisoformat("2021-12-31T00:00:00"),
         ),
         expected_pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
     ),
@@ -112,10 +115,10 @@ def test_excel_field_generation(test_table: TestCase) -> None:
     if isinstance(test_table.constraints, TemporalConstraint):
         parsed_value = datetime.fromisoformat(value)
 
-        if test_table.constraints.min_date is not None:
-            assert test_table.constraints.min_date <= parsed_value
-        if test_table.constraints.max_date is not None:
-            assert parsed_value <= test_table.constraints.max_date
+        if test_table.constraints.min_value is not None:
+            assert test_table.constraints.min_value <= parsed_value
+        if test_table.constraints.max_value is not None:
+            assert parsed_value <= test_table.constraints.max_value
 
 
 def test_excel_fields_equality() -> None:

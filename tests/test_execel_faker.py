@@ -19,7 +19,9 @@ def test_create_fake_excel(schemas_path: Path) -> None:
     record = next(iterator)
 
     assert isinstance(record, dict)
-    assert all(isinstance(key, str) and isinstance(value, str) for key, value in record.items())
+    assert all(
+        isinstance(key, str) and isinstance(value, str) for key, value in record.items()
+    )
 
 
 def test_incorrect_schema() -> None:
