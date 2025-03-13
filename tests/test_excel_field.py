@@ -55,6 +55,12 @@ test_cases = [
         expected_pattern=r"^\d{4}-\d{2}-\d{2}$",
     ),
     TestCase(
+        name="date",
+        type="DATE",
+        constraints=TemporalConstraint(),
+        expected_pattern=r"^\d{4}-\d{2}-\d{2}$",
+    ),
+    TestCase(
         name="time",
         type="TIME",
         constraints=FieldConstraint(),
@@ -67,6 +73,12 @@ test_cases = [
             min_value=datetime.fromisoformat("2021-01-01T00:00:00"),
             max_value=datetime.fromisoformat("2021-12-31T00:00:00"),
         ),
+        expected_pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
+    ),
+    TestCase(
+        name="datetime",
+        type="DATETIME",
+        constraints=TemporalConstraint(),
         expected_pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
     ),
     TestCase(
@@ -88,8 +100,6 @@ test_cases = [
         expected_pattern=r"^(a|b|c)$",
     ),
 ]
-
-
 @pytest.mark.parametrize("test_table", test_cases * 5)
 def test_excel_field_generation(test_table: TestCase) -> None:
     value = ExcelFieldFaker(

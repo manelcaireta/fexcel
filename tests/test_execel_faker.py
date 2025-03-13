@@ -86,3 +86,20 @@ def test_excel_faker_equality() -> None:
     assert faker1 == faker2
     assert faker1 is not faker2
     assert faker1 != "This is not an ExcelFaker instance"
+
+
+def test_print_excel_faker() -> None:
+    fields = [
+        {"name": "field1", "type": "text"},
+        {"name": "field2", "type": "text"},
+        {"name": "field3", "type": "text"},
+    ]
+    faker = ExcelFaker(fields)
+
+    assert str(faker) == (
+        "ExcelFaker(\n"
+        "\tExcelFieldFaker(name=field1 type=text constraints={allowed_values=None})\n"
+        "\tExcelFieldFaker(name=field2 type=text constraints={allowed_values=None})\n"
+        "\tExcelFieldFaker(name=field3 type=text constraints={allowed_values=None})\n"
+        ")"
+    )
