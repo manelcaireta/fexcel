@@ -1,12 +1,15 @@
+# flake8: noqa: S311
+
 import random
 import sys
 import typing
 from collections.abc import Callable
+from datetime import date, datetime, timezone
 from functools import partial
 
 from faker import Faker
 
-from fake_excel.constraint import FieldConstraint, NumericConstraint
+from fake_excel.constraint import FieldConstraint, NumericConstraint, TemporalConstraint
 
 fake = Faker()
 
@@ -19,7 +22,7 @@ def random_float(
         min_value = -sys.float_info.min
     if max_value is None:
         max_value = sys.float_info.max
-    return random.uniform(min_value, max_value)  # noqa: S311
+    return random.uniform(min_value, max_value)
 
 
 def random_int(
@@ -30,7 +33,29 @@ def random_int(
         min_value = -sys.maxsize - 1
     if max_value is None:
         max_value = sys.maxsize
-    return random.randint(min_value, max_value)  # noqa: S311
+    return random.randint(min_value, max_value)
+
+
+def random_date(
+    min_value: date | None = None,
+    max_value: date | None = None,
+) -> str:
+    if min_value is None:
+        min_value = date(1970, 1, 1)
+    if max_value is None:
+        max_value = datetime.now(timezone.utc).date()
+    return fake.date_time_between(min_value, max_value).strftime("%Y-%m-%d")
+
+
+def random_datetime(
+    min_value: datetime | None = None,
+    max_value: datetime | None = None,
+) -> str:
+    if min_value is None:
+        min_value = datetime(1970, 1, 1, 0, 0, 0, 0, timezone.utc)
+    if max_value is None:
+        max_value = datetime.now(timezone.utc)
+    return fake.date_time_between(min_value, max_value).isoformat(sep=" ")
 
 
 type_to_generator = {
@@ -38,9 +63,9 @@ type_to_generator = {
     "email": fake.email,
     "phone": fake.phone_number,
     "address": fake.address,
-    "date": fake.date,
+    "date": random_date,
     "time": fake.time,
-    "datetime": fake.date_time,
+    "datetime": random_datetime,
     "text": fake.text,
     "int": random_int,
     "integer": random_int,
@@ -77,6 +102,8 @@ class ExcelFieldFaker:
             return self._value_creator_from_allowed_values()
         if isinstance(self._constraints, NumericConstraint):
             return self._value_creator_from_range()
+        if isinstance(self._constraints, TemporalConstraint):
+            return self._value_creator_from_date_range()
         return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
 
     def _value_creator_from_allowed_values(self) -> Callable[[], str]:
@@ -87,6 +114,16 @@ class ExcelFieldFaker:
         self._constraints = typing.cast(NumericConstraint, self._constraints)
 
         func = type_to_generator.get(self._type, random_int)
+        if self._constraints.min_value is not None:
+            func = partial(func, min_value=self._constraints.min_value)
+        if self._constraints.max_value is not None:
+            func = partial(func, max_value=self._constraints.max_value)
+        return func
+
+    def _value_creator_from_date_range(self) -> Callable[[], str]:
+        self._constraints = typing.cast(TemporalConstraint, self._constraints)
+
+        func = type_to_generator.get(self._type, random_datetime)
         if self._constraints.min_value is not None:
             func = partial(func, min_value=self._constraints.min_value)
         if self._constraints.max_value is not None:
