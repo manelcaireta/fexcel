@@ -1,89 +1,140 @@
 import re
 from dataclasses import dataclass
+from datetime import datetime
 
 import pytest
 
-from fake_excel.generator import ExcelFieldFaker
+from fake_excel.constraint import (
+    FieldConstraint,
+    NumericConstraint,
+    TemporalConstraint,
+)
+from fake_excel.field import ExcelFieldFaker
 
 
 @dataclass
 class TestCase:
     name: str
     type: str
+    constraints: FieldConstraint
     expected_pattern: str
-    values: list[str] | None = None
 
 
 test_cases = [
     TestCase(
         name="name",
         type="NAME",
+        constraints=FieldConstraint(),
         expected_pattern=r"^[a-zA-Z \.]{2,}$",
-        values=None,
     ),
     TestCase(
         name="age",
         type="INTEGER",
-        expected_pattern=r"^[0-9]*$",
-        values=None,
+        constraints=NumericConstraint(min_value=0, max_value=100),
+        expected_pattern=r"^[-+]?[0-9]*$",
     ),
     TestCase(
         name="email",
         type="EMAIL",
+        constraints=FieldConstraint(),
         expected_pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-        values=None,
     ),
     TestCase(
         name="phone",
         type="PHONE",
+        constraints=FieldConstraint(),
         expected_pattern=r"^.*$",
-        values=None,
     ),
     TestCase(
         name="date",
         type="DATE",
+        constraints=TemporalConstraint(
+            min_value="2021-01-01T00:00:00",
+            max_value="2021-12-31T00:00:00",
+        ),
         expected_pattern=r"^\d{4}-\d{2}-\d{2}$",
-        values=None,
+    ),
+    TestCase(
+        name="date",
+        type="DATE",
+        constraints=TemporalConstraint(),
+        expected_pattern=r"^\d{4}-\d{2}-\d{2}$",
     ),
     TestCase(
         name="time",
         type="TIME",
+        constraints=FieldConstraint(),
         expected_pattern=r"^\d{2}:\d{2}:\d{2}$",
-        values=None,
     ),
     TestCase(
         name="datetime",
         type="DATETIME",
+        constraints=TemporalConstraint(
+            min_value=datetime.fromisoformat("2021-01-01T00:00:00"),
+            max_value=datetime.fromisoformat("2021-12-31T00:00:00"),
+        ),
         expected_pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
-        values=None,
+    ),
+    TestCase(
+        name="datetime",
+        type="DATETIME",
+        constraints=TemporalConstraint(),
+        expected_pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
     ),
     TestCase(
         name="boolean",
         type="BOOLEAN",
+        constraints=FieldConstraint(),
         expected_pattern=r"^(True|False)$",
-        values=None,
     ),
     TestCase(
         name="float",
         type="FLOAT",
-        expected_pattern=r"^[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
-        values=None,
+        constraints=FieldConstraint(),
+        expected_pattern=r"^[-+]?[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
     ),
     TestCase(
         name="enum",
-        type="ENUM",
+        type="TEXT",
+        constraints=FieldConstraint(["a", "b", "c"]),
         expected_pattern=r"^(a|b|c)$",
-        values=["a", "b", "c"],
     ),
 ]
-
-
 @pytest.mark.parametrize("test_table", test_cases * 5)
 def test_excel_field_generation(test_table: TestCase) -> None:
     value = ExcelFieldFaker(
         test_table.name,
         test_table.type,
-        test_table.values,
+        test_table.constraints,
     ).get_value()
     expected = re.compile(test_table.expected_pattern)
+
     assert re.match(expected, value) is not None
+
+    if test_table.constraints.allowed_values is not None:
+        assert value in test_table.constraints.allowed_values
+
+    if isinstance(test_table.constraints, NumericConstraint):
+        parsed_value = float(value) if "." in value else int(value)
+
+        if test_table.constraints.min_value is not None:
+            assert test_table.constraints.min_value <= parsed_value
+        if test_table.constraints.max_value is not None:
+            assert parsed_value <= test_table.constraints.max_value
+
+    if isinstance(test_table.constraints, TemporalConstraint):
+        parsed_value = datetime.fromisoformat(value)
+
+        if test_table.constraints.min_value is not None:
+            assert test_table.constraints.min_value <= parsed_value
+        if test_table.constraints.max_value is not None:
+            assert parsed_value <= test_table.constraints.max_value
+
+
+def test_excel_fields_equality() -> None:
+    faker = ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+
+    assert faker == ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+    assert faker is not ExcelFieldFaker("Test", "INTEGER", FieldConstraint())
+    assert faker != ExcelFieldFaker("Test", "TEXT", FieldConstraint())
+    assert faker != "Not a FieldFaker instance"

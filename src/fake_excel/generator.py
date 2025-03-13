@@ -1,61 +1,10 @@
 import json
-from collections.abc import Callable
 from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
-from faker import Faker
-
-fake = Faker()
-
-type_to_generator = {
-    "name": fake.name,
-    "email": fake.email,
-    "phone": fake.phone_number,
-    "address": fake.address,
-    "date": fake.date,
-    "time": fake.time,
-    "datetime": fake.date_time,
-    "text": fake.text,
-    "int": fake.random_int,
-    "integer": fake.random_int,
-    "float": lambda: fake.random_number() / (fake.random_number() or 10),
-    "boolean": fake.boolean,
-    "url": fake.url,
-    "ipv4": fake.ipv4,
-    "ipv6": fake.ipv6,
-    "uuid": fake.uuid4,
-    "location": fake.locale,
-}
-
-
-class ExcelFieldFaker:
-    def __init__(
-        self,
-        field_name: str,
-        field_type: str,
-        allowed_values: list[str] | None = None,
-    ) -> None:
-        self.name = field_name
-        self._type = field_type.lower()
-        self._value_creator = None
-        self._values = allowed_values
-
-    def get_value(self) -> str:
-        if self._value_creator is None:
-            self._value_creator = self._get_value_creator()
-        return str(self._value_creator())
-
-    def _get_value_creator(self) -> Callable[[], str]:
-        if self._values is not None:
-            values = self._values.copy()
-            return lambda: fake.random_element(values)
-        return type_to_generator.get(self._type, lambda *_args, **_kwargs: "NULL")
-
-    def __eq__(self, value: object) -> bool:
-        if not isinstance(value, ExcelFieldFaker):
-            return False
-        return self.name == value.name and self._type == value._type
+from fake_excel.constraint import FieldConstraint, NumericConstraint, TemporalConstraint
+from fake_excel.field import ExcelFieldFaker
 
 
 class ExcelFaker:
@@ -68,7 +17,7 @@ class ExcelFaker:
         file = Path(file)
         with file.open("r") as fp:
             schema = json.load(fp)
-        return cls(schema["schema"])
+        return cls(schema)
 
     @property
     def fields(self) -> list[ExcelFieldFaker]:
@@ -81,10 +30,18 @@ class ExcelFaker:
         try:
             field_name = field["name"]
             field_type = field["type"]
-            allowed_values = field.get("values")
-            return ExcelFieldFaker(field_name, field_type, allowed_values)
+            constraints = self._parse_constraints(
+                field.get("constraints", {}),
+                field_type,
+            )
+            return ExcelFieldFaker(
+                field_name,
+                field_type,
+                constraints,
+            )
         except KeyError as err:
-            raise ValueError(f"Unprocessable field {field}") from err
+            msg = f"Unprocessable field {field}"
+            raise ValueError(msg) from err
 
     def get_fake_records(self, n: int | None = None) -> Iterator[dict[str, str]]:
         generator = repeat(None, n) if n is not None else repeat(None)
@@ -96,3 +53,21 @@ class ExcelFaker:
         if not isinstance(other, ExcelFaker):
             return False
         return self.fields == other.fields
+
+    def _parse_constraints(
+        self,
+        constraint: dict[str, Any],
+        field_type: str,
+    ) -> FieldConstraint:
+        if field_type.lower() in ["int", "float", "integer"]:
+            return NumericConstraint(**constraint)
+        if field_type.lower() in ["date", "datetime"]:
+            return TemporalConstraint(**constraint)
+        return FieldConstraint(**constraint)
+
+    def __str__(self) -> str:
+        ret = "ExcelFaker(\n"
+        for field in self.fields:
+            ret += f"\t{field}\n"
+        ret += ")"
+        return ret

@@ -4,14 +4,15 @@ from pathlib import Path
 
 import pytest
 
-from fake_excel.generator import ExcelFaker, ExcelFieldFaker
+from fake_excel.field import ExcelFieldFaker
+from fake_excel.generator import ExcelFaker
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
     with (schemas_path / "test.json").open("r") as f:
         json_schema = json.load(f)
 
-    excel_faker = ExcelFaker(json_schema.get("schema"))
+    excel_faker = ExcelFaker(json_schema)
     iterator = excel_faker.get_fake_records()
 
     assert isinstance(iterator, Iterator)
@@ -65,9 +66,40 @@ def test_field_parsing(fields: list) -> None:
 def test_create_from_file(schemas_path: Path) -> None:
     with (schemas_path / "test.json").open("r") as f:
         json_schema = json.load(f)
-    expected_faker = ExcelFaker(json_schema.get("schema"))
+    expected_faker = ExcelFaker(json_schema)
 
     actual_faker = ExcelFaker.from_file(schemas_path / "test.json")
 
     assert isinstance(actual_faker, ExcelFaker)
     assert actual_faker == expected_faker
+
+
+def test_excel_faker_equality() -> None:
+    fields = [
+        {"name": "field1", "type": "text"},
+        {"name": "field2", "type": "text"},
+        {"name": "field3", "type": "text"},
+    ]
+    faker1 = ExcelFaker(fields)
+    faker2 = ExcelFaker(fields)
+
+    assert faker1 == faker2
+    assert faker1 is not faker2
+    assert faker1 != "This is not an ExcelFaker instance"
+
+
+def test_print_excel_faker() -> None:
+    fields = [
+        {"name": "field1", "type": "text"},
+        {"name": "field2", "type": "text"},
+        {"name": "field3", "type": "text"},
+    ]
+    faker = ExcelFaker(fields)
+
+    assert str(faker) == (
+        "ExcelFaker(\n"
+        "\tExcelFieldFaker(name=field1 type=text constraints={allowed_values=None})\n"
+        "\tExcelFieldFaker(name=field2 type=text constraints={allowed_values=None})\n"
+        "\tExcelFieldFaker(name=field3 type=text constraints={allowed_values=None})\n"
+        ")"
+    )
