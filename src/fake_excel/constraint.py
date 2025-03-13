@@ -16,7 +16,10 @@ class FieldConstraint:
         self.allowed_values = allowed_values
 
     def __str__(self) -> str:
-        return f"{{allowed_values={self.allowed_values}}}"
+        ret = "{"
+        ret += " ".join(f"{k}={v}" for k, v in self.__dict__.items())
+        ret += "}"
+        return ret
 
 
 class NumericConstraint(FieldConstraint):
@@ -45,13 +48,6 @@ class NumericConstraint(FieldConstraint):
     @property
     def max_value(self) -> float | None:
         return next(self._max_value)
-
-    def __str__(self) -> str:
-        return (
-            f"{{allowed_values={self.allowed_values} "
-            f"min_value={self.min_value} "
-            f"max_value={self.max_value}}}"
-        )
 
 
 class TemporalConstraint(FieldConstraint):
@@ -84,10 +80,3 @@ class TemporalConstraint(FieldConstraint):
     @property
     def max_value(self) -> datetime | None:
         return next(self._max_value)
-
-    def __str__(self) -> str:
-        return (
-            f"{{allowed_values={self.allowed_values} "
-            f"min_value={self.min_value} "
-            f"max_value={self.max_value}}}"
-        )
