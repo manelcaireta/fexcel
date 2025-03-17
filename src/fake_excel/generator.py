@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Iterator, Self
 
 from fake_excel.constraint import FieldConstraint, NumericConstraint, TemporalConstraint
-from fake_excel.field import ExcelFieldFaker
+from fake_excel.fields import ExcelFieldFaker
 
 
 class ExcelFaker:
