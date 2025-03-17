@@ -3,8 +3,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
-
-from fake_excel.field import ExcelFieldFaker
+from fake_excel.fields import ExcelFieldFaker
 from fake_excel.generator import ExcelFaker
 
 
