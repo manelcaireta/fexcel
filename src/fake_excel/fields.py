@@ -7,6 +7,8 @@ from datetime import date, datetime, timezone
 
 from faker import Faker
 
+from fake_excel.constraint import FieldConstraint
+
 fake = Faker()
 
 
@@ -14,13 +16,22 @@ class ExcelFieldFaker(ABC):
     def __init__(
         self,
         field_name: str,
+        *,
+        constraints: dict | None = None,
     ) -> None:
         self.name = field_name
-        self._last_value = None
+        self._constraints = self.parse_constraints(constraints)
 
     @abstractmethod
     def get_value(self) -> str:
         raise NotImplementedError
+
+    @abstractmethod
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return None
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, self.__class__):
@@ -65,20 +76,44 @@ class NameFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.name()
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class EmailFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.email()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class PhoneFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.phone_number()
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class AddressFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.address()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class DateFieldFaker(ExcelFieldFaker):
@@ -96,10 +131,22 @@ class DateFieldFaker(ExcelFieldFaker):
             max_value = datetime.now(timezone.utc).date()
         return fake.date_time_between(min_value, max_value)
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class TimeFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.time()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class DateTimeFieldFaker(ExcelFieldFaker):
@@ -117,10 +164,22 @@ class DateTimeFieldFaker(ExcelFieldFaker):
             max_value = datetime.now(timezone.utc)
         return fake.date_time_between(min_value, max_value)
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class TextFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.text()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class IntegerFieldFaker(ExcelFieldFaker):
@@ -138,6 +197,12 @@ class IntegerFieldFaker(ExcelFieldFaker):
             max_value = sys.maxsize
         return random.randint(min_value, max_value)
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class FloatFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
@@ -154,32 +219,74 @@ class FloatFieldFaker(ExcelFieldFaker):
             max_value = sys.float_info.max
         return random.uniform(min_value, max_value)
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class BooleanFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return str(fake.boolean())
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class URLFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.url()
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class IPv4FieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.ipv4()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
 
 
 class IPv6FieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.ipv6()
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class UUIDFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.uuid4()
 
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
+
 
 class LocationFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return fake.locale()
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        return super().parse_constraints(constraints)
