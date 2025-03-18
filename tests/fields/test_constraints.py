@@ -1,6 +1,6 @@
 # flake8: noqa: E501, DTZ007
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from fake_excel.constraint import NumericConstraint, TemporalConstraint
@@ -51,13 +51,19 @@ def test_temporal_constraint(field: ExcelFieldFaker) -> None:
 
     if field.constraints.start_date is not None:
         assert (
-            datetime.strptime(field.get_value(), field.format_string)
-            >= field.constraints.start_date
+            datetime.strptime(
+                field.get_value(),
+                field.constraints.format_string,
+            ).astimezone(timezone.utc)
+            >= field.constraints.start_date.astimezone(timezone.utc)
         )
     if field.constraints.end_date is not None:
         assert (
-            datetime.strptime(field.get_value(), field.format_string)
-            <= field.constraints.end_date
+            datetime.strptime(
+                field.get_value(),
+                field.constraints.format_string,
+            ).astimezone(timezone.utc)
+            <= field.constraints.end_date.astimezone(timezone.utc)
         )
 
 
