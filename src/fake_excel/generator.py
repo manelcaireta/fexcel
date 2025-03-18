@@ -30,15 +30,11 @@ class ExcelFaker:
         try:
             field_name = field["name"]
             field_type = field["type"]
-            constraints = self._parse_constraints(
+            _constraints = self._parse_constraints(
                 field.get("constraints", {}),
                 field_type,
             )
-            return ExcelFieldFaker(
-                field_name,
-                field_type,
-                constraints,
-            )
+            return ExcelFieldFaker.parse_field(field_name, field_type)
         except KeyError as err:
             msg = f"Unprocessable field {field}"
             raise ValueError(msg) from err
