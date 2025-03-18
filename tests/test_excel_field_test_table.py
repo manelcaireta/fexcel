@@ -75,6 +75,10 @@ test_cases = [
         ),
     ),
     TestCase(
+        input=Input(name="integer", type="INT"),
+        output=Output(type=IntegerFieldFaker, pattern=r"^-?\d+$"),
+    ),
+    TestCase(
         input=Input(name="integer", type="INTEGER"),
         output=Output(type=IntegerFieldFaker, pattern=r"^-?\d+$"),
     ),
@@ -84,6 +88,10 @@ test_cases = [
             type=FloatFieldFaker,
             pattern=r"^[-+]?[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
         ),
+    ),
+    TestCase(
+        input=Input(name="boolean", type="BOOL"),
+        output=Output(type=BooleanFieldFaker, pattern=r"^(True|False)$"),
     ),
     TestCase(
         input=Input(name="boolean", type="BOOLEAN"),
