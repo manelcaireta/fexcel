@@ -57,7 +57,7 @@ test_cases = [
     ),
     TestCase(
         input=Input(name="address", type="ADDRESS"),
-        output=Output(type=AddressFieldFaker, pattern=r"^.*$"),
+        output=Output(type=AddressFieldFaker, pattern=r"(?s).*"),
     ),
     TestCase(
         input=Input(name="date", type="DATE"),
@@ -91,7 +91,7 @@ test_cases = [
     ),
     TestCase(
         input=Input(name="text", type="TEXT"),
-        output=Output(type=TextFieldFaker, pattern=r"^.*$"),
+        output=Output(type=TextFieldFaker, pattern=r"(?s).*"),
     ),
     TestCase(
         input=Input(name="url", type="URL"),
