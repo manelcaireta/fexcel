@@ -12,9 +12,6 @@ class FieldConstraint:
     which is shared across all posible types.
     """
 
-    def __init__(self, allowed_values: list | None = None) -> None:
-        self.allowed_values = allowed_values
-
     def __str__(self) -> str:
         ret = "{"
         ret += " ".join(f"{k}={v}" for k, v in self.__dict__.items())
@@ -31,7 +28,6 @@ class NumericConstraint(FieldConstraint):
         self,
         min_value: float | Iterator[float | None] | None = None,
         max_value: float | Iterator[float | None] | None = None,
-        allowed_values: list[float] | None = None,
     ) -> None:
         if isinstance(min_value, (int, float, NoneType)):
             min_value = repeat(min_value)
@@ -39,7 +35,7 @@ class NumericConstraint(FieldConstraint):
             max_value = repeat(max_value)
         self._min_value = min_value
         self._max_value = max_value
-        super().__init__(allowed_values)
+        super().__init__()
 
     @property
     def min_value(self) -> float | None:
@@ -59,7 +55,6 @@ class TemporalConstraint(FieldConstraint):
         self,
         start_date: str | datetime | Iterator[datetime | None] | None = None,
         end_date: str | datetime | Iterator[datetime | None] | None = None,
-        allowed_values: list[str] | None = None,
     ) -> None:
         if isinstance(start_date, str):
             start_date = datetime.fromisoformat(start_date)
@@ -71,4 +66,4 @@ class TemporalConstraint(FieldConstraint):
             end_date = repeat(end_date)
         self.start_date = start_date
         self.end_date = end_date
-        super().__init__(allowed_values)
+        super().__init__()

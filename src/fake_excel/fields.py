@@ -1,15 +1,22 @@
 # flake8: noqa: S311
 
 import random
-import sys
 from abc import ABC, abstractmethod
 from datetime import date, datetime, timezone
 
 from faker import Faker
 
-from fake_excel.constraint import FieldConstraint
+from fake_excel.constraint import FieldConstraint, NumericConstraint
 
 fake = Faker()
+
+INFINITY = 1e30
+"""
+A very large number but not large enough to mess with RNGs.
+
+Using something like `sys.float_info.max` or `math.inf` can make the RNGs respond
+with `sys.inf`.
+"""
 
 
 class ExcelFieldFaker(ABC):
@@ -39,7 +46,11 @@ class ExcelFieldFaker(ABC):
         return self.name == value.name
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}(name={self.name})"
+        return (
+            f"{self.__class__.__name__}"
+            f"(name={self.name} "
+            f"constraints={self.constraints})"
+        )
 
     @classmethod
     def parse_field(
@@ -192,28 +203,35 @@ class TextFieldFaker(ExcelFieldFaker):
 
 
 class IntegerFieldFaker(ExcelFieldFaker):
+    constraints: NumericConstraint
+
     def get_value(self) -> str:
         return str(self.random_int())
 
-    def random_int(
-        self,
-        min_value: int | None = None,
-        max_value: int | None = None,
-    ) -> int:
+    def random_int(self) -> int:
+        min_value = self.constraints.min_value
         if min_value is None:
-            min_value = -sys.maxsize - 1
+            min_value = -INFINITY
+        max_value = self.constraints.max_value
         if max_value is None:
-            max_value = sys.maxsize
-        return random.randint(min_value, max_value)
+            max_value = INFINITY
+        return random.randint(int(min_value), int(max_value))
 
     def parse_constraints(
         self,
         constraints: dict | None = None,
     ) -> FieldConstraint | None:
-        return super().parse_constraints(constraints)
+        if not isinstance(constraints, dict):
+            return NumericConstraint()
+        return NumericConstraint(
+            constraints.get("min_value"),
+            constraints.get("max_value"),
+        )
 
 
 class FloatFieldFaker(ExcelFieldFaker):
+    constraints: NumericConstraint
+
     def get_value(self) -> str:
         return str(self.random_float())
 
@@ -222,17 +240,24 @@ class FloatFieldFaker(ExcelFieldFaker):
         min_value: float | None = None,
         max_value: float | None = None,
     ) -> float:
+        min_value = self.constraints.min_value
         if min_value is None:
-            min_value = -sys.float_info.min
+            min_value = -INFINITY
+        max_value = self.constraints.max_value
         if max_value is None:
-            max_value = sys.float_info.max
+            max_value = INFINITY
         return random.uniform(min_value, max_value)
 
     def parse_constraints(
         self,
         constraints: dict | None = None,
     ) -> FieldConstraint | None:
-        return super().parse_constraints(constraints)
+        if not isinstance(constraints, dict):
+            return NumericConstraint()
+        return NumericConstraint(
+            constraints.get("min_value"),
+            constraints.get("max_value"),
+        )
 
 
 class BooleanFieldFaker(ExcelFieldFaker):
