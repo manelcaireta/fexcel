@@ -18,6 +18,10 @@ def test_excel_field_factory(tt: TestCase) -> None:
     expected = re.compile(tt.output.pattern)
     assert re.match(expected, actual) is not None
 
+def test_excel_field_factory_invalid_type() -> None:
+    with pytest.raises(ValueError, match="Unknown field type: INVALID_TYPE"):
+        ExcelFieldFaker.parse_field("Test", "INVALID_TYPE")
+
 
 def test_excel_fields_equality() -> None:
     faker = ExcelFieldFaker.parse_field("Test", "INTEGER")
