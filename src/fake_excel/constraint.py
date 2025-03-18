@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from itertools import repeat
 from types import NoneType
 from typing import Iterator
@@ -55,15 +55,34 @@ class TemporalConstraint(FieldConstraint):
         self,
         start_date: str | datetime | Iterator[datetime | None] | None = None,
         end_date: str | datetime | Iterator[datetime | None] | None = None,
+        format_string: str | None = None,
     ) -> None:
+        self.format_string = format_string or "%Y-%m-%d"
+
         if isinstance(start_date, str):
-            start_date = datetime.fromisoformat(start_date)
+            start_date = self._try_parse_datetime(start_date)
         if isinstance(start_date, (datetime, date, NoneType)):
             start_date = repeat(start_date)
+        self._start_date = start_date
+
         if isinstance(end_date, str):
-            end_date = datetime.fromisoformat(end_date)
+            end_date = self._try_parse_datetime(end_date)
         if isinstance(end_date, (datetime, date, NoneType)):
             end_date = repeat(end_date)
-        self.start_date = start_date
-        self.end_date = end_date
+        self._end_date = end_date
+
         super().__init__()
+
+    @property
+    def start_date(self) -> datetime | None:
+        return next(self._start_date)
+
+    @property
+    def end_date(self) -> datetime | None:
+        return next(self._end_date)
+
+    def _try_parse_datetime(self, value: str) -> datetime | None:
+        try:
+            return datetime.strptime(value, self.format_string).astimezone(timezone.utc)
+        except ValueError:
+            return datetime.fromisoformat(value)

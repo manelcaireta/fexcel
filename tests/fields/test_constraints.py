@@ -1,10 +1,10 @@
-# flake8: noqa: E501
+# flake8: noqa: E501, DTZ007
 
 from datetime import datetime
 
 import pytest
 from fake_excel.constraint import NumericConstraint, TemporalConstraint
-from fake_excel.fields import ExcelFieldFaker
+from fake_excel.fields import DateFieldFaker, DateTimeFieldFaker, ExcelFieldFaker
 
 # fmt: off
 numeric_field_sample = [
@@ -46,6 +46,7 @@ temporal_field_sample = [
 
 @pytest.mark.parametrize("field", temporal_field_sample)
 def test_temporal_constraint(field: ExcelFieldFaker) -> None:
+    assert isinstance(field, DateFieldFaker | DateTimeFieldFaker)
     assert isinstance(field.constraints, TemporalConstraint)
 
     if field.constraints.start_date is not None:
