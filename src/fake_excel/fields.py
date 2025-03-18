@@ -14,10 +14,8 @@ class ExcelFieldFaker(ABC):
     def __init__(
         self,
         field_name: str,
-        field_type: str,
     ) -> None:
         self.name = field_name
-        self._type = field_type.lower()
         self._last_value = None
 
     @abstractmethod
@@ -27,14 +25,14 @@ class ExcelFieldFaker(ABC):
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, self.__class__):
             return False
-        return self.name == value.name and self._type == value._type
+        return self.name == value.name
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(name={self.name})"
 
     @classmethod
     def parse_field(cls, field_name: str, field_type: str) -> "ExcelFieldFaker":
-        field_fakers = {
+        field_fakers: dict[str, type[ExcelFieldFaker]] = {
             "name": NameFieldFaker,
             "email": EmailFieldFaker,
             "phone": PhoneFieldFaker,
@@ -58,7 +56,7 @@ class ExcelFieldFaker(ABC):
             msg = f"Unknown field type: {field_type}"
             raise ValueError(msg)
 
-        return field_fakers[field_type_lower](field_name, field_type)
+        return field_fakers[field_type_lower](field_name)
 
 
 class NameFieldFaker(ExcelFieldFaker):
