@@ -20,7 +20,7 @@ class ExcelFieldFaker(ABC):
         constraints: dict | None = None,
     ) -> None:
         self.name = field_name
-        self._constraints = self.parse_constraints(constraints)
+        self.constraints = self.parse_constraints(constraints)
 
     @abstractmethod
     def get_value(self) -> str:
@@ -42,7 +42,12 @@ class ExcelFieldFaker(ABC):
         return f"{self.__class__.__name__}(name={self.name})"
 
     @classmethod
-    def parse_field(cls, field_name: str, field_type: str) -> "ExcelFieldFaker":
+    def parse_field(
+        cls,
+        field_name: str,
+        field_type: str,
+        constraints: dict | None = None,
+    ) -> "ExcelFieldFaker":
         field_fakers: dict[str, type[ExcelFieldFaker]] = {
             "name": NameFieldFaker,
             "email": EmailFieldFaker,
@@ -69,7 +74,7 @@ class ExcelFieldFaker(ABC):
             msg = f"Unknown field type: {field_type}"
             raise ValueError(msg)
 
-        return field_fakers[field_type_lower](field_name)
+        return field_fakers[field_type_lower](field_name, constraints=constraints)
 
 
 class NameFieldFaker(ExcelFieldFaker):
@@ -117,6 +122,8 @@ class AddressFieldFaker(ExcelFieldFaker):
 
 
 class DateFieldFaker(ExcelFieldFaker):
+    format_string: str = "To be implemented"
+
     def get_value(self) -> str:
         return self.random_date().strftime("%Y-%m-%d")
 
@@ -150,6 +157,8 @@ class TimeFieldFaker(ExcelFieldFaker):
 
 
 class DateTimeFieldFaker(ExcelFieldFaker):
+    format_string: str = "To be implemented"
+
     def get_value(self) -> str:
         return self.random_datetime().isoformat(sep=" ")
 

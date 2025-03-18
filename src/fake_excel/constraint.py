@@ -57,26 +57,18 @@ class TemporalConstraint(FieldConstraint):
 
     def __init__(
         self,
-        min_value: str | datetime | Iterator[datetime | None] | None = None,
-        max_value: str | datetime | Iterator[datetime | None] | None = None,
+        start_date: str | datetime | Iterator[datetime | None] | None = None,
+        end_date: str | datetime | Iterator[datetime | None] | None = None,
         allowed_values: list[str] | None = None,
     ) -> None:
-        if isinstance(min_value, str):
-            min_value = datetime.fromisoformat(min_value)
-        if isinstance(min_value, (datetime, date, NoneType)):
-            min_value = repeat(min_value)
-        if isinstance(max_value, str):
-            max_value = datetime.fromisoformat(max_value)
-        if isinstance(max_value, (datetime, date, NoneType)):
-            max_value = repeat(max_value)
-        self._min_value = min_value
-        self._max_value = max_value
+        if isinstance(start_date, str):
+            start_date = datetime.fromisoformat(start_date)
+        if isinstance(start_date, (datetime, date, NoneType)):
+            start_date = repeat(start_date)
+        if isinstance(end_date, str):
+            end_date = datetime.fromisoformat(end_date)
+        if isinstance(end_date, (datetime, date, NoneType)):
+            end_date = repeat(end_date)
+        self.start_date = start_date
+        self.end_date = end_date
         super().__init__(allowed_values)
-
-    @property
-    def min_value(self) -> datetime | None:
-        return next(self._min_value)
-
-    @property
-    def max_value(self) -> datetime | None:
-        return next(self._max_value)
