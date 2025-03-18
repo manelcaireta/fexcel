@@ -173,10 +173,9 @@ class DateTimeFieldFaker(ExcelFieldFaker):
     def get_value(self) -> str:
         return self.random_datetime().strftime(self.constraints.format_string)
 
-    def random_datetime(
-        self) -> datetime:
+    def random_datetime(self) -> datetime:
         epoch = datetime(1970, 1, 1, 0, 0, 0, 0, timezone.utc)
-        start_value  = self.constraints.start_date or epoch
+        start_value = self.constraints.start_date or epoch
         end_value = self.constraints.end_date or datetime.now(timezone.utc)
         return fake.date_time_between(start_value, end_value)
 
@@ -185,7 +184,7 @@ class DateTimeFieldFaker(ExcelFieldFaker):
         constraints: dict | None = None,
     ) -> FieldConstraint | None:
         if not isinstance(constraints, dict):
-            return TemporalConstraint()
+            return TemporalConstraint(format_string="%Y-%m-%d %H:%M:%S")
         return TemporalConstraint(
             start_date=constraints.get("start_date"),
             end_date=constraints.get("end_date"),
