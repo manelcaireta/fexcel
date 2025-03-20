@@ -6,7 +6,12 @@ from datetime import date, datetime, timezone
 
 from faker import Faker
 
-from fake_excel.constraint import FieldConstraint, NumericConstraint, TemporalConstraint
+from fake_excel.constraint import (
+    ChoiceConstraint,
+    FieldConstraint,
+    NumericConstraint,
+    TemporalConstraint,
+)
 
 fake = Faker()
 
@@ -15,7 +20,7 @@ INFINITY = 1e30
 A very large number but not large enough to mess with RNGs.
 
 Using something like `sys.float_info.max` or `math.inf` can make the RNGs respond
-with `sys.inf`.
+with `math.inf`.
 """
 
 
@@ -59,6 +64,12 @@ class ExcelFieldFaker(ABC):
         field_type: str,
         constraints: dict | None = None,
     ) -> "ExcelFieldFaker":
+        if constraints and "allowed_values" in constraints:
+            return ChoiceFieldFaker(
+                field_name=field_name,
+                constraints=constraints,
+            )
+
         field_fakers: dict[str, type[ExcelFieldFaker]] = {
             "name": NameFieldFaker,
             "email": EmailFieldFaker,
@@ -86,6 +97,21 @@ class ExcelFieldFaker(ABC):
             raise ValueError(msg)
 
         return field_fakers[field_type_lower](field_name, constraints=constraints)
+
+
+class ChoiceFieldFaker(ExcelFieldFaker):
+    constraints: ChoiceConstraint
+
+    def get_value(self) -> str:
+        return random.choice(self.constraints.allowed_values)
+
+    def parse_constraints(
+        self,
+        constraints: dict | None = None,
+    ) -> FieldConstraint | None:
+        if not isinstance(constraints, dict):
+            return ChoiceConstraint()
+        return ChoiceConstraint(allowed_values=constraints.get("allowed_values"))
 
 
 class NameFieldFaker(ExcelFieldFaker):

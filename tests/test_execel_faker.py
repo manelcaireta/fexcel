@@ -97,8 +97,8 @@ def test_print_excel_faker() -> None:
 
     assert str(faker) == (
         "ExcelFaker(\n"
-        "\tTextFieldFaker(name=field1)\n"
-        "\tIntegerFieldFaker(name=field2)\n"
-        "\tBooleanFieldFaker(name=field3)\n"
+        "\tTextFieldFaker(name=field1 constraints=None)\n"
+        "\tIntegerFieldFaker(name=field2 constraints={_min_value=repeat(None) _max_value=repeat(None)})\n"  # noqa: E501
+        "\tBooleanFieldFaker(name=field3 constraints=None)\n"
         ")"
     )

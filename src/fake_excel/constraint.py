@@ -19,6 +19,15 @@ class FieldConstraint:
         return ret
 
 
+class ChoiceConstraint(FieldConstraint):
+    """
+    Choice constraint. It represents a list of values that can appear in the field.
+    """
+
+    def __init__(self, allowed_values: list[str] | None = None) -> None:
+        self.allowed_values = allowed_values or ["NULL"]
+        super().__init__()
+
 class NumericConstraint(FieldConstraint):
     """
     Numerical constraint. It represents constraints for float or int types.
