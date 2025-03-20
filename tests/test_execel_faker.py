@@ -3,8 +3,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
-
-from fake_excel.field import ExcelFieldFaker
+from fake_excel.fields import ExcelFieldFaker
 from fake_excel.generator import ExcelFaker
 
 
@@ -91,15 +90,15 @@ def test_excel_faker_equality() -> None:
 def test_print_excel_faker() -> None:
     fields = [
         {"name": "field1", "type": "text"},
-        {"name": "field2", "type": "text"},
-        {"name": "field3", "type": "text"},
+        {"name": "field2", "type": "int"},
+        {"name": "field3", "type": "bool"},
     ]
     faker = ExcelFaker(fields)
 
     assert str(faker) == (
         "ExcelFaker(\n"
-        "\tExcelFieldFaker(name=field1 type=text constraints={allowed_values=None})\n"
-        "\tExcelFieldFaker(name=field2 type=text constraints={allowed_values=None})\n"
-        "\tExcelFieldFaker(name=field3 type=text constraints={allowed_values=None})\n"
+        "\tTextFieldFaker(name=field1 constraints=None)\n"
+        "\tIntegerFieldFaker(name=field2 constraints={_min_value=repeat(None) _max_value=repeat(None)})\n"  # noqa: E501
+        "\tBooleanFieldFaker(name=field3 constraints=None)\n"
         ")"
     )
