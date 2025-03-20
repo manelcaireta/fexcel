@@ -1,0 +1,99 @@
+[
+  {
+    "name": "choice",
+    "type": "CHOICE",
+    "constraints": {
+      "allowed_values": ["Choice 1", "Choice 2", "Choice 3", "Choice 4"],
+      "probabilities": [0.1, 0.2, 0.3, 0.4]
+    }
+  },
+  {
+    "name": "name",
+    "type": "NAME"
+  },
+  {
+    "name": "email",
+    "type": "EMAIL"
+  },
+  {
+    "name": "phone",
+    "type": "PHONE"
+  },
+  {
+    "name": "address",
+    "type": "ADDRESS"
+  },
+  {
+    "name": "date",
+    "type": "DATE"
+  },
+  {
+    "name": "time",
+    "type": "TIME"
+  },
+  {
+    "name": "datetime",
+    "type": "DATETIME"
+  },
+  {
+    "name": "integer 1",
+    "type": "INT",
+    "constraints": {
+      "min_value": 0,
+      "max_value": 100,
+      "distribution": "uniform"
+    }
+  },
+  {
+    "name": "integer 2",
+    "type": "INTEGER",
+    "constraints": {
+      "mean": 1,
+      "standard_deviation": 0,
+      "distribution": "normal"
+    }
+  },
+  {
+    "name": "float",
+    "type": "FLOAT",
+    "constraints": {
+      "min_value": 0,
+      "max_value": 100
+    }
+  },
+  {
+    "name": "boolean 1",
+    "type": "BOOL"
+  },
+  {
+    "name": "boolean 2",
+    "type": "BOOLEAN",
+    "constraints": {
+      "probability": 0.1
+    }
+  },
+  {
+    "name": "text",
+    "type": "TEXT"
+  },
+  {
+    "name": "url",
+    "type": "URL"
+  },
+  {
+    "name": "ipv4",
+    "type": "IPV4"
+  },
+  {
+    "name": "ipv6",
+    "type": "IPV6"
+  },
+  {
+    "name": "uuid",
+    "type": "UUID"
+  },
+  {
+    "name": "location",
+    "type": "LOCATION"
+  }
+]

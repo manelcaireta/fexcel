@@ -3,12 +3,13 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+
 from fake_excel.fields import ExcelFieldFaker
 from fake_excel.generator import ExcelFaker
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
-    with (schemas_path / "test.json").open("r") as f:
+    with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
 
     excel_faker = ExcelFaker(json_schema)
@@ -63,11 +64,11 @@ def test_field_parsing(fields: list) -> None:
 
 
 def test_create_from_file(schemas_path: Path) -> None:
-    with (schemas_path / "test.json").open("r") as f:
+    with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
     expected_faker = ExcelFaker(json_schema)
 
-    actual_faker = ExcelFaker.from_file(schemas_path / "test.json")
+    actual_faker = ExcelFaker.from_file(schemas_path / "mock-values.json")
 
     assert isinstance(actual_faker, ExcelFaker)
     assert actual_faker == expected_faker
