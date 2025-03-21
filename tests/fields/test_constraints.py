@@ -146,7 +146,7 @@ def test_choice_distributions() -> None:
         field_type="choice",
         constraints={
             "allowed_values": allowed_values,
-            "probabilities": [0, 0.1, 0.9],
+            "probabilities": [0, 0.01, 0.99],
         },
     )
 

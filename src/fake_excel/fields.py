@@ -103,7 +103,11 @@ class ChoiceFieldFaker(ExcelFieldFaker):
     constraints: ChoiceConstraint
 
     def get_value(self) -> str:
-        return random.choice(self.constraints.allowed_values)
+        choice = random.choices(
+            population=self.constraints.allowed_values,
+            weights=self.constraints.probabilities,
+        )
+        return choice[0]
 
     def parse_constraints(
         self,
@@ -111,7 +115,10 @@ class ChoiceFieldFaker(ExcelFieldFaker):
     ) -> FieldConstraint | None:
         if not isinstance(constraints, dict):
             return ChoiceConstraint()
-        return ChoiceConstraint(allowed_values=constraints.get("allowed_values"))
+        return ChoiceConstraint(
+            allowed_values=constraints.get("allowed_values"),
+            probabilities=constraints.get("probabilities"),
+        )
 
 
 class NameFieldFaker(ExcelFieldFaker):

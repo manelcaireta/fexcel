@@ -1,4 +1,8 @@
+from collections.abc import Iterable
+from copy import deepcopy
+from dataclasses import dataclass
 from datetime import date, datetime, timezone
+from functools import cached_property
 from itertools import repeat
 from types import NoneType
 from typing import Iterator
@@ -24,9 +28,44 @@ class ChoiceConstraint(FieldConstraint):
     Choice constraint. It represents a list of values that can appear in the field.
     """
 
-    def __init__(self, allowed_values: list[str] | None = None) -> None:
+    def __init__(
+        self,
+        allowed_values: list[str] | None = None,
+        probabilities: list[float] | None = None,
+    ) -> None:
         self.allowed_values = allowed_values or ["NULL"]
+        if not probabilities:
+            probabilities = [1 / len(self.allowed_values)] * len(self.allowed_values)
+        self.probabilities = self._parse_probabilities(probabilities)
         super().__init__()
+
+    def _parse_probabilities(self, original_probabilities: list[float]) -> list[float]:
+        probabilities = deepcopy(original_probabilities)
+        if len(probabilities) <= len(self.allowed_values):
+            remaining_probability_space = 1 - sum(probabilities)
+            remaining_observations = len(probabilities) - len(self.allowed_values)
+            probabilities.extend(
+                remaining_probability_space / remaining_observations
+                for _ in range(remaining_observations)
+            )
+
+        if len(probabilities) > len(self.allowed_values):
+            msg = (
+                f"Probabilities must be a list of length {len(self.allowed_values)} "
+                f"or less, got {len(probabilities)}"
+            )
+            raise ValueError(msg)
+
+        if any(p < 0 for p in probabilities):
+            msg = f"Probabilities must be positive, got {probabilities}"
+            raise ValueError(msg)
+
+        if sum(probabilities) != 1:
+            msg = f"Probabilities must sum up to 1, got {sum(probabilities)}"
+            raise ValueError(msg)
+
+        return probabilities
+
 
 class NumericConstraint(FieldConstraint):
     """
