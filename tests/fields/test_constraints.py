@@ -14,6 +14,8 @@ from fake_excel.fields import (
     ExcelFieldFaker,
 )
 
+# SIMPLE CONSTRAINT TESTS
+
 # fmt: off
 numeric_field_sample = [
     ExcelFieldFaker.parse_field("IntegerField", "int"),
@@ -86,6 +88,9 @@ def test_choice_constraint() -> None:
         assert field_faker.get_value() in allowed_values
 
 
+# DISTRIBUTION TESTS
+
+
 @dataclass
 class DistributionTestCase:
     input: ExcelFieldFaker
@@ -113,6 +118,30 @@ numeric_distributions_sample = [
         ),
         expected_distribution=random.normalvariate,
     ),
+    DistributionTestCase(
+        input=ExcelFieldFaker.parse_field(
+            field_name="FloatField",
+            field_type="float",
+            constraints={
+                "mean": 0,
+                "std": 1,
+                "distribution": "gaussian",
+            },
+        ),
+        expected_distribution=random.gauss,
+    ),
+    DistributionTestCase(
+        input=ExcelFieldFaker.parse_field(
+            field_name="FloatField",
+            field_type="float",
+            constraints={
+                "mean": 0,
+                "std": 1,
+                "distribution": "lognormal",
+            },
+        ),
+        expected_distribution=random.lognormvariate,
+    ),
 ]
 
 
@@ -133,6 +162,22 @@ def test_numeric_distributions_invalid() -> None:
                 "min_value": 0,
                 "max_value": 100,
                 "distribution": distribution,
+            },
+        )
+
+    with pytest.raises(
+        ValueError,
+        match="Cannot specify both min_value/max_value and mean/std",
+    ):
+        ExcelFieldFaker.parse_field(
+            field_name="FloatField",
+            field_type="float",
+            constraints={
+                "min_value": 0,
+                "max_value": 1,
+                "mean": 0,
+                "std": 1,
+                "distribution": "normal",
             },
         )
 
@@ -157,6 +202,45 @@ def test_choice_distributions() -> None:
     assert random_sample.count("B") <= max_range // 2
     assert random_sample.count("C") >= max_range // 2
     assert random_sample.count("C") <= max_range
+
+
+def test_invalid_choice_distribution() -> None:
+    allowed_values = ["A", "B", "C"]
+
+    probabilities = [0.5, 0.5, 0.5]
+    with pytest.raises(ValueError, match=r"Probabilities must sum up to 1, got .*"):
+        ExcelFieldFaker.parse_field(
+            field_name="ChoiceField",
+            field_type="choice",
+            constraints={
+                "allowed_values": allowed_values,
+                "probabilities": probabilities,
+            },
+        )
+
+    probabilities = [-1]
+    with pytest.raises(ValueError, match=r"Probabilities must be positive, got .*"):
+        ExcelFieldFaker.parse_field(
+            field_name="ChoiceField",
+            field_type="choice",
+            constraints={
+                "allowed_values": allowed_values,
+                "probabilities": probabilities,
+            },
+        )
+    probabilities = [0.1] * (len(allowed_values) + 1)
+    with pytest.raises(
+        ValueError,
+        match=r"Probabilities must have the same length as 'allowed_values' or less.*",
+    ):
+        ExcelFieldFaker.parse_field(
+            field_name="ChoiceField",
+            field_type="choice",
+            constraints={
+                "allowed_values": allowed_values,
+                "probabilities": probabilities,
+            },
+        )
 
 
 def test_boolean_distributions() -> None:
@@ -190,3 +274,24 @@ def test_boolean_distributions() -> None:
     assert random_sample.count(str(True)) <= max_range
     assert random_sample.count(str(False)) >= 0
     assert random_sample.count(str(False)) <= max_range
+
+
+def test_invalid_boolean_distribution() -> None:
+    with pytest.raises(
+        ValueError,
+        match=r"Probability must be between 0 and 1, got .*",
+    ):
+        ExcelFieldFaker.parse_field(
+            field_name="BooleanField",
+            field_type="bool",
+            constraints={"probability": -1},
+        )
+    with pytest.raises(
+        ValueError,
+        match=r"Probability must be between 0 and 1, got .*",
+    ):
+        ExcelFieldFaker.parse_field(
+            field_name="BooleanField",
+            field_type="bool",
+            constraints={"probability": 2},
+        )

@@ -60,8 +60,9 @@ class ChoiceConstraint(FieldConstraint):
 
         if len(probabilities) > len(self.allowed_values):
             msg = (
-                f"Probabilities must be a list of length {len(self.allowed_values)} "
-                f"or less, got {len(probabilities)}"
+                f"Probabilities must have the same length as 'allowed_values' "
+                f"or less, got length of probabilities is {len(probabilities)} when "
+                f"length of 'allowed_values' is {len(self.allowed_values)}"
             )
             raise ValueError(msg)
 
@@ -155,6 +156,7 @@ class TemporalConstraint(FieldConstraint):
             return datetime.strptime(value, self.format_string).astimezone(timezone.utc)
         except ValueError:
             return datetime.fromisoformat(value)
+
 
 class BooleanConstraint(FieldConstraint):
     """

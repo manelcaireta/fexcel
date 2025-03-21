@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from fake_excel.fields import (
     AddressFieldFaker,
     BooleanFieldFaker,
+    ChoiceFieldFaker,
     DateFieldFaker,
     DateTimeFieldFaker,
     EmailFieldFaker,
@@ -126,5 +127,9 @@ test_cases = [
     FactoryTestCase(
         input=Input(name="location", type="LOCATION"),
         output=Output(type=LocationFieldFaker, pattern=r"^[a-z]{2,}_[A-Z]{2,}$"),
+    ),
+    FactoryTestCase(
+        input=Input(name="choice", type="CHOICE"),
+        output=Output(type=ChoiceFieldFaker, pattern=r"NULL"),
     ),
 ]

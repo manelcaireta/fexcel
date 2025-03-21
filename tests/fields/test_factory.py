@@ -6,6 +6,8 @@ from fake_excel.fields import ExcelFieldFaker
 from tests.fields.test_factory_test_table import FactoryTestCase, test_cases
 
 
+# NOTE: As this test is fairly fast, we apply it 5 times to catch possible pattern
+# pattern errors that pass the first time.
 @pytest.mark.parametrize("tt", test_cases * 5)
 def test_field_faker_factory(tt: FactoryTestCase) -> None:
     field_faker = ExcelFieldFaker.parse_field(

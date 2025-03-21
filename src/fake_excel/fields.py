@@ -28,8 +28,7 @@ class ExcelFieldFaker(ABC):
         self.constraints = self.parse_constraints(constraints)
 
     @abstractmethod
-    def get_value(self) -> str:
-        raise NotImplementedError
+    def get_value(self) -> str:...
 
     @abstractmethod
     def parse_constraints(
@@ -82,6 +81,7 @@ class ExcelFieldFaker(ABC):
             "ipv4": IPv4FieldFaker,
             "ipv6": IPv6FieldFaker,
             "location": LocationFieldFaker,
+            "choice": ChoiceFieldFaker,
         }
 
         field_type_lower = field_type.lower()
