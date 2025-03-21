@@ -15,14 +15,6 @@ from fake_excel.constraint import (
 
 fake = Faker()
 
-INFINITY = 1e30
-"""
-A very large number but not large enough to mess with RNGs.
-
-Using something like `sys.float_info.max` or `math.inf` can make the RNGs respond
-with `math.inf`.
-"""
-
 
 class ExcelFieldFaker(ABC):
     def __init__(
@@ -240,16 +232,7 @@ class IntegerFieldFaker(ExcelFieldFaker):
     constraints: NumericConstraint
 
     def get_value(self) -> str:
-        return str(self.random_int())
-
-    def random_int(self) -> int:
-        min_value = self.constraints.min_value
-        if min_value is None:
-            min_value = -INFINITY
-        max_value = self.constraints.max_value
-        if max_value is None:
-            max_value = INFINITY
-        return random.randint(int(min_value), int(max_value))
+        return str(int(self.constraints.rng()))
 
     def parse_constraints(
         self,
@@ -258,8 +241,11 @@ class IntegerFieldFaker(ExcelFieldFaker):
         if not isinstance(constraints, dict):
             return NumericConstraint()
         return NumericConstraint(
-            constraints.get("min_value"),
-            constraints.get("max_value"),
+            distribution=constraints.get("distribution"),
+            min_value=constraints.get("min_value"),
+            max_value=constraints.get("max_value"),
+            mean=constraints.get("mean"),
+            std=constraints.get("std"),
         )
 
 
@@ -267,20 +253,7 @@ class FloatFieldFaker(ExcelFieldFaker):
     constraints: NumericConstraint
 
     def get_value(self) -> str:
-        return str(self.random_float())
-
-    def random_float(
-        self,
-        min_value: float | None = None,
-        max_value: float | None = None,
-    ) -> float:
-        min_value = self.constraints.min_value
-        if min_value is None:
-            min_value = -INFINITY
-        max_value = self.constraints.max_value
-        if max_value is None:
-            max_value = INFINITY
-        return random.uniform(min_value, max_value)
+        return str(self.constraints.rng())
 
     def parse_constraints(
         self,
@@ -289,8 +262,11 @@ class FloatFieldFaker(ExcelFieldFaker):
         if not isinstance(constraints, dict):
             return NumericConstraint()
         return NumericConstraint(
-            constraints.get("min_value"),
-            constraints.get("max_value"),
+            distribution=constraints.get("distribution"),
+            min_value=constraints.get("min_value"),
+            max_value=constraints.get("max_value"),
+            mean=constraints.get("mean"),
+            std=constraints.get("std"),
         )
 
 

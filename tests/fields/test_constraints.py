@@ -107,7 +107,7 @@ numeric_distributions_sample = [
             field_type="int",
             constraints={
                 "mean": 0,
-                "standard_deviation": 100,
+                "std": 1,
                 "distribution": "normal",
             },
         ),
@@ -119,7 +119,7 @@ numeric_distributions_sample = [
 @pytest.mark.parametrize("test_case", numeric_distributions_sample)
 def test_numeric_distributions(test_case: DistributionTestCase) -> None:
     assert isinstance(test_case.input.constraints, NumericConstraint)
-    assert test_case.input.constraints.distribution == test_case.expected_distribution
+    assert test_case.input.constraints.rng.func == test_case.expected_distribution
 
 
 def test_numeric_distributions_invalid() -> None:

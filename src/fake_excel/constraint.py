@@ -1,11 +1,20 @@
-from collections.abc import Iterable
+# flake8: noqa: S311
+
+import random
 from copy import deepcopy
-from dataclasses import dataclass
 from datetime import date, datetime, timezone
-from functools import cached_property
+from functools import partial
 from itertools import repeat
 from types import NoneType
 from typing import Iterator
+
+INFINITY = 1e30
+"""
+A very large number but not large enough to mess with RNGs.
+
+Using something like `sys.float_info.max` or `math.inf` can make the RNGs respond
+with `math.inf`.
+"""
 
 
 class FieldConstraint:
@@ -74,24 +83,36 @@ class NumericConstraint(FieldConstraint):
 
     def __init__(
         self,
-        min_value: float | Iterator[float | None] | None = None,
-        max_value: float | Iterator[float | None] | None = None,
+        *,
+        min_value: float | None = None,
+        max_value: float | None = None,
+        mean: float | None = None,
+        std: float | None = None,
+        distribution: str | None = None,
     ) -> None:
-        if isinstance(min_value, (int, float, NoneType)):
-            min_value = repeat(min_value)
-        if isinstance(max_value, (int, float, NoneType)):
-            max_value = repeat(max_value)
-        self._min_value = min_value
-        self._max_value = max_value
+        if (min_value or max_value) and (mean or std):
+            msg = "Cannot specify both min_value/max_value and mean/std"
+            raise ValueError(msg)
+        self.min_value = min_value if min_value is not None else -INFINITY
+        self.max_value = max_value if max_value is not None else INFINITY
+        self.mean = mean if mean is not None else 0
+        self.std = std if std is not None else 1
+
+        distribution = distribution or "uniform"
+        match distribution.lower():
+            case "uniform":
+                self.rng = partial(random.uniform, self.min_value, self.max_value)
+            case "normal":
+                self.rng = partial(random.normalvariate, self.mean, self.std)
+            case "gaussian":
+                self.rng = partial(random.gauss, self.mean, self.std)
+            case "lognormal":
+                self.rng = partial(random.lognormvariate, self.mean, self.std)
+            case _:
+                msg = f"Invalid distribution: {distribution}"
+                raise ValueError(msg)
+
         super().__init__()
-
-    @property
-    def min_value(self) -> float | None:
-        return next(self._min_value)
-
-    @property
-    def max_value(self) -> float | None:
-        return next(self._max_value)
 
 
 class TemporalConstraint(FieldConstraint):
