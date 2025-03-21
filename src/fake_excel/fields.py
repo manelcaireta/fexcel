@@ -7,6 +7,7 @@ from datetime import date, datetime, timezone
 from faker import Faker
 
 from fake_excel.constraint import (
+    BooleanConstraint,
     ChoiceConstraint,
     FieldConstraint,
     NumericConstraint,
@@ -271,14 +272,18 @@ class FloatFieldFaker(ExcelFieldFaker):
 
 
 class BooleanFieldFaker(ExcelFieldFaker):
+    constraints: BooleanConstraint
+
     def get_value(self) -> str:
-        return str(fake.boolean())
+        return str(fake.boolean(int(self.constraints.probability * 100)))
 
     def parse_constraints(
         self,
         constraints: dict | None = None,
     ) -> FieldConstraint | None:
-        return super().parse_constraints(constraints)
+        if not isinstance(constraints, dict):
+            return BooleanConstraint()
+        return BooleanConstraint(probability=constraints.get("probability", 0.5))
 
 
 class URLFieldFaker(ExcelFieldFaker):

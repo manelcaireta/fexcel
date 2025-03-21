@@ -155,3 +155,15 @@ class TemporalConstraint(FieldConstraint):
             return datetime.strptime(value, self.format_string).astimezone(timezone.utc)
         except ValueError:
             return datetime.fromisoformat(value)
+
+class BooleanConstraint(FieldConstraint):
+    """
+    Boolean constraint. It represents constraints for boolean types.
+    """
+
+    def __init__(self, *, probability: float = 0.5) -> None:
+        if probability < 0 or probability > 1:
+            msg = f"Probability must be between 0 and 1, got {probability}"
+            raise ValueError(msg)
+        self.probability = probability
+        super().__init__()
