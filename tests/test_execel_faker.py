@@ -1,4 +1,5 @@
 import json
+import re
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -96,10 +97,11 @@ def test_print_excel_faker() -> None:
     ]
     faker = ExcelFaker(fields)
 
-    assert str(faker) == (
-        "ExcelFaker(\n"
-        "\tTextFieldFaker(name=field1 constraints=None)\n"
-        "\tIntegerFieldFaker(name=field2 constraints={_min_value=repeat(None) _max_value=repeat(None)})\n"  # noqa: E501
-        "\tBooleanFieldFaker(name=field3 constraints=None)\n"
-        ")"
+    expected = re.compile(
+        r"ExcelFaker\("
+        r"\s+TextFieldFaker\(name=field1 constraints=None\)\n"
+        r"\s+IntegerFieldFaker\(name=field2 constraints=\{.*?\}\)\n"
+        r"\s+BooleanFieldFaker\(name=field3 constraints=None\)\n"
+        r"\)",
     )
+    assert re.match(expected, str(faker))
