@@ -101,7 +101,7 @@ def test_print_excel_faker() -> None:
         r"ExcelFaker\("
         r"\s+TextFieldFaker\(name=field1 constraints=None\)\n"
         r"\s+IntegerFieldFaker\(name=field2 constraints=\{.*?\}\)\n"
-        r"\s+BooleanFieldFaker\(name=field3 constraints=None\)\n"
+        r"\s+BooleanFieldFaker\(name=field3 constraints=\{.*?\}\)\n"
         r"\)",
     )
     assert re.match(expected, str(faker))
