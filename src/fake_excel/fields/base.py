@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from fake_excel.constraint import FieldConstraint
-
 
 class ExcelFieldFaker(ABC):
     _fakers: dict[str, type["ExcelFieldFaker"]] = {}  # noqa: RUF012
@@ -9,11 +7,9 @@ class ExcelFieldFaker(ABC):
     def __init__(
         self,
         field_name: str,
-        *,
-        constraints: dict | None = None,
+        **_kwargs: str | float | list,
     ) -> None:
         self.name = field_name
-        self.constraints = self.parse_constraints(constraints)
 
     def __init_subclass__(cls, *, faker_types: str | list[str]) -> None:
         cls.register_subclass(faker_types, cls)
@@ -45,31 +41,26 @@ class ExcelFieldFaker(ABC):
     @abstractmethod
     def get_value(self) -> str: ...
 
-    @abstractmethod
-    def parse_constraints(
-        self,
-        constraints: dict | None = None,
-    ) -> FieldConstraint | None:
-        return None
-
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, self.__class__):
             return False
         return self.name == value.name
 
     def __str__(self) -> str:
-        return (
-            f"{self.__class__.__name__}"
-            f"(name={self.name} "
-            f"constraints={self.constraints})"
+        ret = f"{self.__class__.__name__} "
+        ret += "{"
+        ret += " ".join(
+            f"{k}={v}" for k, v in self.__dict__.items() if not k.startswith("_")
         )
+        ret += "}"
+        return ret
 
     @classmethod
     def parse_field(
         cls,
         field_name: str,
         field_type: str,
-        constraints: dict | None = None,
+        **kwargs: str | float | list,
     ) -> "ExcelFieldFaker":
         faker_cls = cls.get_faker(field_type)
-        return faker_cls(field_name, constraints=constraints)
+        return faker_cls(field_name, **kwargs)

@@ -27,10 +27,11 @@ class ExcelFaker:
 
     def _parse_field(self, field: dict[str, Any]) -> ExcelFieldFaker:
         try:
+            constraints = field.get("constraints", {})
             return ExcelFieldFaker.parse_field(
                 field_name=field["name"],
                 field_type=field["type"],
-                constraints=field.get("constraints"),
+                **constraints,
             )
         except KeyError as err:
             msg = f"Unprocessable field {field}"
