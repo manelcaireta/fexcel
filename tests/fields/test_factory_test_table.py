@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from fake_excel.fields import (
     AddressFieldFaker,
     BooleanFieldFaker,
+    ChoiceFieldFaker,
     DateFieldFaker,
     DateTimeFieldFaker,
     EmailFieldFaker,
@@ -34,97 +35,101 @@ class Output:
 
 
 @dataclass
-class TestCase:
+class FactoryTestCase:
     input: Input
     output: Output
 
 
 test_cases = [
-    TestCase(
+    FactoryTestCase(
         input=Input(name="name", type="NAME"),
         output=Output(type=NameFieldFaker, pattern=r"^[a-zA-Z \.]{2,}$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="email", type="EMAIL"),
         output=Output(
             type=EmailFieldFaker,
             pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
         ),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="phone", type="PHONE"),
         output=Output(type=PhoneFieldFaker, pattern=r"^.*$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="address", type="ADDRESS"),
         output=Output(type=AddressFieldFaker, pattern=r"(?s).*"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="date", type="DATE"),
         output=Output(type=DateFieldFaker, pattern=r"^\d{4}-\d{2}-\d{2}$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="time", type="TIME"),
         output=Output(type=TimeFieldFaker, pattern=r"^\d{2}:\d{2}:\d{2}$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="datetime", type="DATETIME"),
         output=Output(
             type=DateTimeFieldFaker,
             pattern=r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d*)?$",
         ),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="integer", type="INT"),
         output=Output(type=IntegerFieldFaker, pattern=r"^-?\d+$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="integer", type="INTEGER"),
         output=Output(type=IntegerFieldFaker, pattern=r"^-?\d+$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="float", type="FLOAT"),
         output=Output(
             type=FloatFieldFaker,
             pattern=r"^[-+]?[0-9]*(\.[0-9]*)?(e[+-]\d*)?$",
         ),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="boolean", type="BOOL"),
         output=Output(type=BooleanFieldFaker, pattern=r"^(True|False)$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="boolean", type="BOOLEAN"),
         output=Output(type=BooleanFieldFaker, pattern=r"^(True|False)$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="text", type="TEXT"),
         output=Output(type=TextFieldFaker, pattern=r"(?s).*"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="url", type="URL"),
         output=Output(type=URLFieldFaker, pattern=r"^https?:\/\/.*[\.].*$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="ipv4", type="IPV4"),
         output=Output(
             type=IPv4FieldFaker,
             pattern=r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$",
         ),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="ipv6", type="IPV6"),
         output=Output(type=IPv6FieldFaker, pattern=r"^[0-9a-fA-F:]+$"),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="uuid", type="UUID"),
         output=Output(
             type=UUIDFieldFaker,
             pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         ),
     ),
-    TestCase(
+    FactoryTestCase(
         input=Input(name="location", type="LOCATION"),
         output=Output(type=LocationFieldFaker, pattern=r"^[a-z]{2,}_[A-Z]{2,}$"),
+    ),
+    FactoryTestCase(
+        input=Input(name="choice", type="CHOICE"),
+        output=Output(type=ChoiceFieldFaker, pattern=r"NULL"),
     ),
 ]

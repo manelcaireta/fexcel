@@ -1,14 +1,16 @@
 import json
+import re
 from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+
 from fake_excel.fields import ExcelFieldFaker
 from fake_excel.generator import ExcelFaker
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
-    with (schemas_path / "test.json").open("r") as f:
+    with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
 
     excel_faker = ExcelFaker(json_schema)
@@ -63,11 +65,11 @@ def test_field_parsing(fields: list) -> None:
 
 
 def test_create_from_file(schemas_path: Path) -> None:
-    with (schemas_path / "test.json").open("r") as f:
+    with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
     expected_faker = ExcelFaker(json_schema)
 
-    actual_faker = ExcelFaker.from_file(schemas_path / "test.json")
+    actual_faker = ExcelFaker.from_file(schemas_path / "mock-values.json")
 
     assert isinstance(actual_faker, ExcelFaker)
     assert actual_faker == expected_faker
@@ -95,10 +97,11 @@ def test_print_excel_faker() -> None:
     ]
     faker = ExcelFaker(fields)
 
-    assert str(faker) == (
-        "ExcelFaker(\n"
-        "\tTextFieldFaker(name=field1 constraints=None)\n"
-        "\tIntegerFieldFaker(name=field2 constraints={_min_value=repeat(None) _max_value=repeat(None)})\n"  # noqa: E501
-        "\tBooleanFieldFaker(name=field3 constraints=None)\n"
-        ")"
+    expected = re.compile(
+        r"ExcelFaker\("
+        r"\s+TextFieldFaker\(name=field1 constraints=None\)\n"
+        r"\s+IntegerFieldFaker\(name=field2 constraints=\{.*?\}\)\n"
+        r"\s+BooleanFieldFaker\(name=field3 constraints=\{.*?\}\)\n"
+        r"\)",
     )
+    assert re.match(expected, str(faker))

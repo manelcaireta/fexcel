@@ -22,7 +22,7 @@ def main() -> None:
     isave_as(records=iterator, dest_file_name=args.output_path, sheet_name="Sheet 1")
 
 
-def parse_args() -> Args:
+def parse_args(args: list[str] = sys.argv[1:]) -> Args:
     parser = ArgumentParser()
     parser.add_argument("schema_path", type=str, help="Path to the schema file")
     parser.add_argument("output_path", type=str, help="Path to the output file")
@@ -35,7 +35,7 @@ def parse_args() -> Args:
     )
 
     try:
-        return Args.model_validate(parser.parse_args())
+        return Args.model_validate(parser.parse_args(args))
     except SystemExit:
         print()
         parser.print_help()
