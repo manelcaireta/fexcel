@@ -22,3 +22,6 @@ dev = [
     "pytest-cov>=6.0.0",
     "pytest-sugar>=1.0.0",
 ]
+
+[tool.coverage.report]
+exclude_also = ["if __name__ == .__main__.:", "def main"]
