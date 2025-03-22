@@ -49,7 +49,7 @@
     "type": "INTEGER",
     "constraints": {
       "mean": 1,
-      "standard_deviation": 0,
+      "std": 0,
       "distribution": "normal"
     }
   },

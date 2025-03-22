@@ -2,7 +2,6 @@ from uuid import uuid4
 
 import pytest
 
-from fake_excel.constraint import FieldConstraint
 from fake_excel.fields import ExcelFieldFaker
 
 
@@ -11,9 +10,6 @@ def test_field_registration() -> None:
         def get_value(self) -> str:
             return "test_value"
 
-        def parse_constraints(self, constraints: dict) -> FieldConstraint | None:
-            return super().parse_constraints(constraints)
-
     field_faker = ExcelFieldFaker.parse_field(
         field_name="mock",
         field_type="test_field",
@@ -21,7 +17,6 @@ def test_field_registration() -> None:
 
     assert isinstance(field_faker, MockFieldFaker)
     assert field_faker.get_value() == "test_value"
-    assert field_faker.parse_constraints({}) is None
 
 
 def test_invalid_field_registration() -> None:

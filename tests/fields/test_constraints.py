@@ -7,49 +7,46 @@ from typing import Callable
 
 import pytest
 
-from fake_excel.constraint import NumericConstraint, TemporalConstraint
 from fake_excel.fields import (
     DateFieldFaker,
     DateTimeFieldFaker,
     ExcelFieldFaker,
 )
+from fake_excel.fields.numeric import FloatFieldFaker
 
 # SIMPLE CONSTRAINT TESTS
 
 # fmt: off
 numeric_field_sample = [
     ExcelFieldFaker.parse_field("IntegerField", "int"),
-    ExcelFieldFaker.parse_field("IntegerField", "int", {"min_value": 0}),
-    ExcelFieldFaker.parse_field("IntegerField", "int", {"max_value": 100}),
-    ExcelFieldFaker.parse_field("IntegerField", "int", {"min_value": 0, "max_value": 100}),
+    ExcelFieldFaker.parse_field("IntegerField", "int", min_value=0),
+    ExcelFieldFaker.parse_field("IntegerField", "int", max_value=100),
+    ExcelFieldFaker.parse_field("IntegerField", "int", min_value=0, max_value=100),
     ExcelFieldFaker.parse_field("FloatingPointField", "float"),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", {"min_value": 0}),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", {"max_value": 100.0}),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", {"min_value": 0, "max_value": 100}),
+    ExcelFieldFaker.parse_field("FloatingPointField", "float", min_value=0),
+    ExcelFieldFaker.parse_field("FloatingPointField", "float", max_value=100.0),
+    ExcelFieldFaker.parse_field("FloatingPointField", "float", min_value= 0, max_value=100),
 ]
 # fmt: on
 
 
 @pytest.mark.parametrize("field", numeric_field_sample)
 def test_numeric_constraint(field: ExcelFieldFaker) -> None:
-    assert isinstance(field.constraints, NumericConstraint)
-
-    if field.constraints.min_value is not None:
-        assert float(field.get_value()) >= field.constraints.min_value
-    if field.constraints.max_value is not None:
-        assert float(field.get_value()) <= field.constraints.max_value
+    assert isinstance(field, FloatFieldFaker)
+    assert float(field.get_value()) >= field.min_value
+    assert float(field.get_value()) <= field.max_value
 
 
 # fmt: off
 temporal_field_sample = [
     ExcelFieldFaker.parse_field("DateField", "date"),
-    ExcelFieldFaker.parse_field("DateField", "date", {"start_date": "2023-01-01"}),
-    ExcelFieldFaker.parse_field("DateField", "date", {"end_date": "2023-12-31"}),
-    ExcelFieldFaker.parse_field("DateField", "date", {"start_date": "2023-01-01", "end_date": "2023-12-31"}),
+    ExcelFieldFaker.parse_field("DateField", "date", start_date="2023-01-01"),
+    ExcelFieldFaker.parse_field("DateField", "date", end_date="2023-12-31"),
+    ExcelFieldFaker.parse_field("DateField", "date", start_date="2023-01-01", end_date="2023-12-31"),
     ExcelFieldFaker.parse_field("DateTimeField", "datetime"),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", {"start_date": "2023-01-01"}),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", {"end_date": "2023-12-31"}),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", {"start_date": "2023-01-01", "end_date": "2023-12-31"}),
+    ExcelFieldFaker.parse_field("DateTimeField", "datetime", start_date="2023-01-01"),
+    ExcelFieldFaker.parse_field("DateTimeField", "datetime", end_date="2023-12-31"),
+    ExcelFieldFaker.parse_field("DateTimeField", "datetime", start_date="2023-01-01", end_date="2023-12-31"),
 ]
 # fmt: on
 
@@ -57,22 +54,13 @@ temporal_field_sample = [
 @pytest.mark.parametrize("field", temporal_field_sample)
 def test_temporal_constraint(field: ExcelFieldFaker) -> None:
     assert isinstance(field, DateFieldFaker | DateTimeFieldFaker)
-    assert isinstance(field.constraints, TemporalConstraint)
 
-    if field.constraints.start_date is not None:
-        assert datetime.strptime(
-            field.get_value(),
-            field.constraints.format_string,
-        ).astimezone(timezone.utc) >= field.constraints.start_date.astimezone(
-            timezone.utc,
-        )
-    if field.constraints.end_date is not None:
-        assert datetime.strptime(
-            field.get_value(),
-            field.constraints.format_string,
-        ).astimezone(timezone.utc) <= field.constraints.end_date.astimezone(
-            timezone.utc,
-        )
+    if field.start_date is not None:
+        got = datetime.strptime(field.get_value(), field.format_string)
+        assert got.astimezone(timezone.utc) >= field.start_date.astimezone(timezone.utc)
+    if field.end_date is not None:
+        got = datetime.strptime(field.get_value(), field.format_string)
+        assert got.astimezone(timezone.utc) <= field.end_date.astimezone(timezone.utc)
 
 
 def test_choice_constraint() -> None:
@@ -81,7 +69,7 @@ def test_choice_constraint() -> None:
     field_faker = ExcelFieldFaker.parse_field(
         field_name="ChoiceField",
         field_type="choice",
-        constraints={"allowed_values": allowed_values},
+        allowed_values=allowed_values,
     )
 
     for _ in range(100):
@@ -102,7 +90,9 @@ numeric_distributions_sample = [
         input=ExcelFieldFaker.parse_field(
             field_name="IntegerField",
             field_type="int",
-            constraints={"min_value": 0, "max_value": 100, "distribution": "uniform"},
+            min_value=0,
+            max_value=100,
+            distribution="uniform",
         ),
         expected_distribution=random.uniform,
     ),
@@ -110,11 +100,9 @@ numeric_distributions_sample = [
         input=ExcelFieldFaker.parse_field(
             field_name="IntegerField",
             field_type="int",
-            constraints={
-                "mean": 0,
-                "std": 1,
-                "distribution": "normal",
-            },
+            mean=0,
+            std=1,
+            distribution="normal",
         ),
         expected_distribution=random.normalvariate,
     ),
@@ -122,11 +110,9 @@ numeric_distributions_sample = [
         input=ExcelFieldFaker.parse_field(
             field_name="FloatField",
             field_type="float",
-            constraints={
-                "mean": 0,
-                "std": 1,
-                "distribution": "gaussian",
-            },
+            mean=0,
+            std=1,
+            distribution="gaussian",
         ),
         expected_distribution=random.gauss,
     ),
@@ -134,11 +120,9 @@ numeric_distributions_sample = [
         input=ExcelFieldFaker.parse_field(
             field_name="FloatField",
             field_type="float",
-            constraints={
-                "mean": 0,
-                "std": 1,
-                "distribution": "lognormal",
-            },
+            mean=0,
+            std=1,
+            distribution="lognormal",
         ),
         expected_distribution=random.lognormvariate,
     ),
@@ -147,8 +131,8 @@ numeric_distributions_sample = [
 
 @pytest.mark.parametrize("test_case", numeric_distributions_sample)
 def test_numeric_distributions(test_case: DistributionTestCase) -> None:
-    assert isinstance(test_case.input.constraints, NumericConstraint)
-    assert test_case.input.constraints.rng.func == test_case.expected_distribution
+    assert isinstance(test_case.input, FloatFieldFaker)
+    assert test_case.input.rng.func == test_case.expected_distribution
 
 
 @dataclass
@@ -209,7 +193,7 @@ def test_numeric_distributions_invalid(test_case: InvalidDistributionTestCase) -
         ExcelFieldFaker.parse_field(
             field_name="IntegerField",
             field_type="int",
-            constraints=test_case.constraints,
+            **test_case.constraints,
         )
 
 
@@ -220,10 +204,8 @@ def test_choice_distributions() -> None:
     field_faker = ExcelFieldFaker.parse_field(
         field_name="ChoiceField",
         field_type="choice",
-        constraints={
-            "allowed_values": allowed_values,
-            "probabilities": [0, 0.01, 0.99],
-        },
+        allowed_values=allowed_values,
+        probabilities=[0, 0.01, 0.99],
     )
 
     random_sample = [field_faker.get_value() for _ in range(max_range)]
@@ -243,10 +225,8 @@ def test_invalid_choice_distribution() -> None:
         ExcelFieldFaker.parse_field(
             field_name="ChoiceField",
             field_type="choice",
-            constraints={
-                "allowed_values": allowed_values,
-                "probabilities": probabilities,
-            },
+            allowed_values=allowed_values,
+            probabilities=probabilities,
         )
 
     probabilities = [-1]
@@ -254,10 +234,8 @@ def test_invalid_choice_distribution() -> None:
         ExcelFieldFaker.parse_field(
             field_name="ChoiceField",
             field_type="choice",
-            constraints={
-                "allowed_values": allowed_values,
-                "probabilities": probabilities,
-            },
+            allowed_values=allowed_values,
+            probabilities=probabilities,
         )
     probabilities = [0.1] * (len(allowed_values) + 1)
     with pytest.raises(
@@ -267,10 +245,8 @@ def test_invalid_choice_distribution() -> None:
         ExcelFieldFaker.parse_field(
             field_name="ChoiceField",
             field_type="choice",
-            constraints={
-                "allowed_values": allowed_values,
-                "probabilities": probabilities,
-            },
+            allowed_values=allowed_values,
+            probabilities=probabilities,
         )
 
 
@@ -280,7 +256,7 @@ def test_boolean_distributions() -> None:
     field_faker = ExcelFieldFaker.parse_field(
         field_name="BooleanField",
         field_type="bool",
-        constraints={"probability": 0},
+        probability=0,
     )
     random_sample = [field_faker.get_value() for _ in range(max_range)]
     assert random_sample.count(str(True)) == 0
@@ -289,7 +265,7 @@ def test_boolean_distributions() -> None:
     field_faker = ExcelFieldFaker.parse_field(
         field_name="BooleanField",
         field_type="bool",
-        constraints={"probability": 1},
+        probability=1,
     )
     random_sample = [field_faker.get_value() for _ in range(max_range)]
     assert random_sample.count(str(True)) == max_range
@@ -298,7 +274,7 @@ def test_boolean_distributions() -> None:
     field_faker = ExcelFieldFaker.parse_field(
         field_name="BooleanField",
         field_type="bool",
-        constraints={"probability": 0.5},
+        probability=0.5,
     )
     random_sample = [field_faker.get_value() for _ in range(max_range)]
     assert random_sample.count(str(True)) >= 0
@@ -315,7 +291,7 @@ def test_invalid_boolean_distribution() -> None:
         ExcelFieldFaker.parse_field(
             field_name="BooleanField",
             field_type="bool",
-            constraints={"probability": -1},
+            probability=-1,
         )
     with pytest.raises(
         ValueError,
@@ -324,5 +300,5 @@ def test_invalid_boolean_distribution() -> None:
         ExcelFieldFaker.parse_field(
             field_name="BooleanField",
             field_type="bool",
-            constraints={"probability": 2},
+            probability=2,
         )
