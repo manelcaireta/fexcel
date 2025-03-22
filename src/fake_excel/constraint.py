@@ -82,6 +82,9 @@ class NumericConstraint(FieldConstraint):
     Numerical constraint. It represents constraints for float or int types.
     """
 
+    INTERVAL_DISTRIBUTIONS = ("uniform",)
+    EXPONENTIAL_DISTRIBUTIONS = ("normal", "gaussian", "lognormal")
+
     def __init__(
         self,
         *,
@@ -91,16 +94,41 @@ class NumericConstraint(FieldConstraint):
         std: float | None = None,
         distribution: str | None = None,
     ) -> None:
-        if (min_value or max_value) and (mean or std):
-            msg = "Cannot specify both min_value/max_value and mean/std"
-            raise ValueError(msg)
+        self.is_min_max = bool(min_value is not None or max_value is not None)
+        self.is_mean_std = bool(mean is not None or std is not None)
+        self.distribution = distribution or "uniform"
         self.min_value = min_value if min_value is not None else -INFINITY
         self.max_value = max_value if max_value is not None else INFINITY
         self.mean = mean if mean is not None else 0
         self.std = std if std is not None else 1
 
-        distribution = distribution or "uniform"
-        match distribution.lower():
+        self._raise_if_invalid_combination()
+        self._resolve_rng()
+
+        super().__init__()
+
+    def _raise_if_invalid_combination(self) -> None:
+        if (self.is_min_max) and (self.is_mean_std):
+            msg = "Cannot specify both min_value/max_value and mean/std"
+            raise ValueError(msg)
+
+        if (self.is_min_max) and (self.distribution in self.EXPONENTIAL_DISTRIBUTIONS):
+            msg = (
+                "Cannot specify min_value/max_value with "
+                f"{self.distribution} distribution"
+            )
+            raise ValueError(msg)
+
+        if (self.is_mean_std) and (self.distribution in self.INTERVAL_DISTRIBUTIONS):
+            msg = f"Cannot specify mean/std with {self.distribution} distribution"
+            raise ValueError(msg)
+
+        if self.min_value > self.max_value:
+            msg = "min_value must be less than or equal than max_value"
+            raise ValueError(msg)
+
+    def _resolve_rng(self) -> None:
+        match self.distribution.lower():
             case "uniform":
                 self.rng = partial(random.uniform, self.min_value, self.max_value)
             case "normal":
@@ -110,10 +138,8 @@ class NumericConstraint(FieldConstraint):
             case "lognormal":
                 self.rng = partial(random.lognormvariate, self.mean, self.std)
             case _:
-                msg = f"Invalid distribution: {distribution}"
+                msg = f"Invalid distribution: {self.distribution}"
                 raise ValueError(msg)
-
-        super().__init__()
 
 
 class TemporalConstraint(FieldConstraint):

@@ -198,7 +198,7 @@ invalid_numeric_distributions_sample = [
             "max_value": 0,
             "distribution": "uniform",
         },
-        expected_exception_match=r"max_value should be greater than min_value",
+        expected_exception_match=r"min_value must be less than or equal than max_value",
     ),
 ]
 
