@@ -151,34 +151,65 @@ def test_numeric_distributions(test_case: DistributionTestCase) -> None:
     assert test_case.input.constraints.rng.func == test_case.expected_distribution
 
 
-def test_numeric_distributions_invalid() -> None:
-    distribution = "invalid"
+@dataclass
+class InvalidDistributionTestCase:
+    constraints: dict
+    expected_exception_match: str
 
-    with pytest.raises(ValueError, match=f"Invalid distribution: {distribution}"):
+
+invalid_numeric_distributions_sample = [
+    InvalidDistributionTestCase(
+        constraints={
+            "min_value": 0,
+            "max_value": 100,
+            "distribution": "invalid",
+        },
+        expected_exception_match=r"Invalid distribution.*?",
+    ),
+    InvalidDistributionTestCase(
+        constraints={
+            "mean": 0,
+            "std": 1,
+            "min_value": 0,
+            "max_value": 100,
+            "distribution": "normal",
+        },
+        expected_exception_match=r"Cannot specify both min_value/max_value and mean/std",
+    ),
+    InvalidDistributionTestCase(
+        constraints={
+            "min_value": 0,
+            "max_value": 1,
+            "distribution": "gaussian",
+        },
+        expected_exception_match=r"Cannot specify min_value/max_value with gaussian distribution",
+    ),
+    InvalidDistributionTestCase(
+        constraints={
+            "mean": 0,
+            "std": 1,
+            "distribution": "uniform",
+        },
+        expected_exception_match=r"Cannot specify mean/std with uniform distribution",
+    ),
+    InvalidDistributionTestCase(
+        constraints={
+            "min_value": 1,
+            "max_value": 0,
+            "distribution": "uniform",
+        },
+        expected_exception_match=r"max_value should be greater than min_value",
+    ),
+]
+
+
+@pytest.mark.parametrize("test_case", invalid_numeric_distributions_sample)
+def test_numeric_distributions_invalid(test_case: InvalidDistributionTestCase) -> None:
+    with pytest.raises(ValueError, match=test_case.expected_exception_match):
         ExcelFieldFaker.parse_field(
             field_name="IntegerField",
             field_type="int",
-            constraints={
-                "min_value": 0,
-                "max_value": 100,
-                "distribution": distribution,
-            },
-        )
-
-    with pytest.raises(
-        ValueError,
-        match="Cannot specify both min_value/max_value and mean/std",
-    ):
-        ExcelFieldFaker.parse_field(
-            field_name="FloatField",
-            field_type="float",
-            constraints={
-                "min_value": 0,
-                "max_value": 1,
-                "mean": 0,
-                "std": 1,
-                "distribution": "normal",
-            },
+            constraints=test_case.constraints,
         )
 
 
