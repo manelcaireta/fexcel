@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import pytest
 
 from fake_excel.constraint import FieldConstraint
@@ -26,3 +28,13 @@ def test_invalid_field_registration() -> None:
     with pytest.raises(TypeError):
 
         class MockFieldFaker(ExcelFieldFaker): ...  # type: ignore[]
+
+
+def test_repeated_type_registration() -> None:
+    uuid = str(uuid4())
+
+    class MockFieldFaker1(ExcelFieldFaker, faker_types=uuid): ...
+
+    with pytest.raises(ValueError, match=f"Field type {uuid} already registered"):
+
+        class MockFieldFaker2(ExcelFieldFaker, faker_types=uuid): ...
