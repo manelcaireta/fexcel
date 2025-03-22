@@ -22,5 +22,7 @@ def test_field_faker_factory(tt: FactoryTestCase) -> None:
 
 
 def test_field_faker_factory_invalid_type() -> None:
-    with pytest.raises(ValueError, match="Unknown field type: INVALID_TYPE"):
-        ExcelFieldFaker.parse_field("Test", "INVALID_TYPE")
+    invalid_type = "INVALID_TYPE"
+
+    with pytest.raises(ValueError, match=f"Unknown field type: {invalid_type.lower()}"):
+        ExcelFieldFaker.parse_field("Test", invalid_type)
