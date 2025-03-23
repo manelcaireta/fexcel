@@ -13,6 +13,10 @@ class Fexcel:
     Fexcel is the main class of the `fexcel` package, designed to generate fake excel
     files based on a provided schema. It provides methods to parse schema definitions,
     generate fake records, and write them to an Excel file.
+
+    It can be instantiated either as any normal class passing the schema as a python
+    dictionary or through its method `from_file` to read a JSON file containing the
+    schema.
     """
 
     def __init__(self, schema: list[dict[str, str]]) -> None:
