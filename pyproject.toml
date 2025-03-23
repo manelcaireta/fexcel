@@ -27,4 +27,4 @@ dev = [
 ]
 
 [tool.coverage.report]
-exclude_also = ["if __name__ == .__main__.:", "def main"]
+exclude_also = ["if __name__ == .__main__.:", "def main", "@abstractmethod"]
