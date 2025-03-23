@@ -3,7 +3,7 @@ import re
 import pytest
 
 from fexcel.fields import FexcelField
-from tests.fields.test_factory_test_table import FactoryTestCase, test_cases
+from tests.fexcel_fields.test_factory_test_table import FactoryTestCase, test_cases
 
 
 # NOTE: As this test is fairly fast, we apply it 5 times to catch possible pattern
