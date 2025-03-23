@@ -124,5 +124,9 @@ def test_write_to_file(output_path: Path) -> None:
     assert output_file.exists()
     assert output_file.is_file()
 
-    sheet = pe.get_sheet(file_name=str(output_file), sheet_name="Sheet1")
+    sheet = pe.get_sheet(
+        file_name=str(output_file),
+        sheet_name="Sheet1",
+        name_columns_by_row=0,
+    )
     assert set(sheet.colnames) == {"field1", "field2", "field3"}

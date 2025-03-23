@@ -3,6 +3,8 @@ from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
+import pyexcel as pe
+
 from fexcel.fields import FexcelField
 
 
@@ -42,6 +44,20 @@ class Fexcel:
 
         for _ in generator:
             yield {field.name: field.get_value() for field in self._fields}
+
+    def write_to_file(
+        self,
+        file_path: str | Path,
+        num_fakes: int = 1000,
+        sheet_name: str = "Sheet1",
+    ) -> None:
+        file_path = Path(file_path).resolve()
+        iterator = self.get_fake_records(num_fakes)
+        pe.isave_as(
+            records=iterator,
+            dest_file_name=str(file_path),
+            sheet_name=sheet_name,
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Fexcel):

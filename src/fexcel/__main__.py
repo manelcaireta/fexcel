@@ -2,7 +2,6 @@ import sys
 from argparse import ArgumentParser
 
 from pydantic import BaseModel, ConfigDict
-from pyexcel import isave_as
 
 from fexcel.generator import Fexcel
 
@@ -17,9 +16,8 @@ class Args(BaseModel):
 
 def main() -> None:
     args = parse_args()
-    fake = Fexcel.from_file(args.schema_path)
-    iterator = fake.get_fake_records(args.num_fakes)
-    isave_as(records=iterator, dest_file_name=args.output_path, sheet_name="Sheet 1")
+    fexcel = Fexcel.from_file(args.schema_path)
+    fexcel.write_to_file(args.output_path, args.num_fakes)
 
 
 def parse_args(args: list[str] = sys.argv[1:]) -> Args:
