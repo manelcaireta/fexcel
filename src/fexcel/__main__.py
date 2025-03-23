@@ -34,12 +34,7 @@ def parse_args(args: list[str] = sys.argv[1:]) -> Args:
         help="Number of fake records to generate",
     )
 
-    try:
-        return Args.model_validate(parser.parse_args(args))
-    except SystemExit:
-        print()
-        parser.print_help()
-        sys.exit(1)
+    return Args.model_validate(parser.parse_args(args))
 
 
 if __name__ == "__main__":
