@@ -3,10 +3,10 @@ from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
-from fexcel.fields import ExcelFieldFaker
+from fexcel.fields import FexcelField
 
 
-class ExcelFaker:
+class Fexcel:
     def __init__(self, schema: list[dict[str, str]]) -> None:
         self._schema = schema
         self._fields = self._parse_fields()
@@ -19,16 +19,16 @@ class ExcelFaker:
         return cls(schema)
 
     @property
-    def fields(self) -> list[ExcelFieldFaker]:
+    def fields(self) -> list[FexcelField]:
         return self._fields
 
-    def _parse_fields(self) -> list[ExcelFieldFaker]:
+    def _parse_fields(self) -> list[FexcelField]:
         return [self._parse_field(field) for field in self._schema]
 
-    def _parse_field(self, field: dict[str, Any]) -> ExcelFieldFaker:
+    def _parse_field(self, field: dict[str, Any]) -> FexcelField:
         try:
             constraints = field.get("constraints", {})
-            return ExcelFieldFaker.parse_field(
+            return FexcelField.parse_field(
                 field_name=field["name"],
                 field_type=field["type"],
                 **constraints,
@@ -44,7 +44,7 @@ class ExcelFaker:
             yield {field.name: field.get_value() for field in self._fields}
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, ExcelFaker):
+        if not isinstance(other, Fexcel):
             return False
         return self.fields == other.fields
 

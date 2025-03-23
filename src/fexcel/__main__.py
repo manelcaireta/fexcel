@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pydantic import BaseModel, ConfigDict
 from pyexcel import isave_as
 
-from fexcel.generator import ExcelFaker
+from fexcel.generator import Fexcel
 
 
 class Args(BaseModel):
@@ -17,7 +17,7 @@ class Args(BaseModel):
 
 def main() -> None:
     args = parse_args()
-    fake = ExcelFaker.from_file(args.schema_path)
+    fake = Fexcel.from_file(args.schema_path)
     iterator = fake.get_fake_records(args.num_fakes)
     isave_as(records=iterator, dest_file_name=args.output_path, sheet_name="Sheet 1")
 

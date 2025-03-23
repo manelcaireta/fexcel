@@ -5,15 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from fexcel.fields import ExcelFieldFaker
-from fexcel.generator import ExcelFaker
+from fexcel.fields import FexcelField
+from fexcel.generator import Fexcel
 
 
 def test_create_fake_excel(schemas_path: Path) -> None:
     with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
 
-    excel_faker = ExcelFaker(json_schema)
+    excel_faker = Fexcel(json_schema)
     iterator = excel_faker.get_fake_records()
 
     assert isinstance(iterator, Iterator)
@@ -29,7 +29,7 @@ def test_incorrect_schema() -> None:
     invalid_field = {"": ""}
 
     with pytest.raises(ValueError, match=f"Unprocessable field {invalid_field}"):
-        _ = ExcelFaker([invalid_field])
+        _ = Fexcel([invalid_field])
 
 
 @pytest.mark.parametrize(
@@ -57,21 +57,21 @@ def test_incorrect_schema() -> None:
     ],
 )
 def test_field_parsing(fields: list) -> None:
-    excel_faker = ExcelFaker(fields)
+    excel_faker = Fexcel(fields)
 
     assert isinstance(excel_faker.fields, list)
     assert len(excel_faker.fields) == len(fields)
-    assert all(isinstance(field, ExcelFieldFaker) for field in excel_faker.fields)
+    assert all(isinstance(field, FexcelField) for field in excel_faker.fields)
 
 
 def test_create_from_file(schemas_path: Path) -> None:
     with (schemas_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
-    expected_faker = ExcelFaker(json_schema)
+    expected_faker = Fexcel(json_schema)
 
-    actual_faker = ExcelFaker.from_file(schemas_path / "mock-values.json")
+    actual_faker = Fexcel.from_file(schemas_path / "mock-values.json")
 
-    assert isinstance(actual_faker, ExcelFaker)
+    assert isinstance(actual_faker, Fexcel)
     assert actual_faker == expected_faker
 
 
@@ -81,8 +81,8 @@ def test_excel_faker_equality() -> None:
         {"name": "field2", "type": "text"},
         {"name": "field3", "type": "text"},
     ]
-    faker1 = ExcelFaker(fields)
-    faker2 = ExcelFaker(fields)
+    faker1 = Fexcel(fields)
+    faker2 = Fexcel(fields)
 
     assert faker1 == faker2
     assert faker1 is not faker2
@@ -95,7 +95,7 @@ def test_print_excel_faker() -> None:
         {"name": "field2", "type": "int"},
         {"name": "field3", "type": "bool"},
     ]
-    faker = ExcelFaker(fields)
+    faker = Fexcel(fields)
 
     expected = re.compile(
         r"ExcelFaker\("

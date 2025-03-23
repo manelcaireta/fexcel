@@ -3,7 +3,7 @@ from functools import partial
 
 from faker import Faker
 
-from fexcel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import FexcelField
 
 fake = Faker()
 INFINITY = 1e30
@@ -15,7 +15,7 @@ with `math.inf`.
 """
 
 
-class FloatFieldFaker(ExcelFieldFaker, faker_types="float"):
+class FloatFieldFaker(FexcelField, faker_types="float"):
     INTERVAL_DISTRIBUTIONS = ("uniform",)
     EXPONENTIAL_DISTRIBUTIONS = ("normal", "gaussian", "lognormal")
 

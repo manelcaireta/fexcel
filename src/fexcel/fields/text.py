@@ -1,40 +1,40 @@
 from faker import Faker
 
-from fexcel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import FexcelField
 
 fake = Faker()
 
 
-class TextFieldFaker(ExcelFieldFaker, faker_types=["text", "string"]):
+class TextFieldFaker(FexcelField, faker_types=["text", "string"]):
     def get_value(self) -> str:
         return fake.text()
 
 
-class NameFieldFaker(ExcelFieldFaker, faker_types="name"):
+class NameFieldFaker(FexcelField, faker_types="name"):
     def get_value(self) -> str:
         return fake.name()
 
 
-class EmailFieldFaker(ExcelFieldFaker, faker_types="email"):
+class EmailFieldFaker(FexcelField, faker_types="email"):
     def get_value(self) -> str:
         return fake.email()
 
 
-class PhoneFieldFaker(ExcelFieldFaker, faker_types="phone"):
+class PhoneFieldFaker(FexcelField, faker_types="phone"):
     def get_value(self) -> str:
         return fake.phone_number()
 
 
-class AddressFieldFaker(ExcelFieldFaker, faker_types="address"):
+class AddressFieldFaker(FexcelField, faker_types="address"):
     def get_value(self) -> str:
         return fake.address()
 
 
-class UUIDFieldFaker(ExcelFieldFaker, faker_types="uuid"):
+class UUIDFieldFaker(FexcelField, faker_types="uuid"):
     def get_value(self) -> str:
         return fake.uuid4()
 
 
-class LocationFieldFaker(ExcelFieldFaker, faker_types="location"):
+class LocationFieldFaker(FexcelField, faker_types="location"):
     def get_value(self) -> str:
         return fake.locale()

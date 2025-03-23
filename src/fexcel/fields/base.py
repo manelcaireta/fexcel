@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class ExcelFieldFaker(ABC):
-    _fakers: dict[str, type["ExcelFieldFaker"]] = {}  # noqa: RUF012
+class FexcelField(ABC):
+    _fakers: dict[str, type["FexcelField"]] = {}  # noqa: RUF012
 
     def __init__(
         self,
@@ -19,7 +19,7 @@ class ExcelFieldFaker(ABC):
     def register_subclass(
         cls,
         faker_types: str | list[str],
-        faker_subclass: type["ExcelFieldFaker"],
+        faker_subclass: type["FexcelField"],
     ) -> None:
         if isinstance(faker_types, str):
             faker_types = [faker_types]
@@ -31,7 +31,7 @@ class ExcelFieldFaker(ABC):
             cls._fakers[_faker_type.lower()] = faker_subclass
 
     @classmethod
-    def get_faker(cls, faker_type: str) -> type["ExcelFieldFaker"]:
+    def get_faker(cls, faker_type: str) -> type["FexcelField"]:
         faker_type = faker_type.lower()
         if faker_type not in cls._fakers:
             msg = f"Unknown field type: {faker_type}"
@@ -61,6 +61,6 @@ class ExcelFieldFaker(ABC):
         field_name: str,
         field_type: str,
         **kwargs: str | float | list,
-    ) -> "ExcelFieldFaker":
+    ) -> "FexcelField":
         faker_cls = cls.get_faker(field_type)
         return faker_cls(field_name, **kwargs)

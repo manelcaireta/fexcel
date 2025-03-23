@@ -1,10 +1,10 @@
 import random
 from copy import deepcopy
 
-from fexcel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import FexcelField
 
 
-class ChoiceFieldFaker(ExcelFieldFaker, faker_types="choice"):
+class ChoiceFieldFaker(FexcelField, faker_types="choice"):
     def __init__(
         self,
         field_name: str,

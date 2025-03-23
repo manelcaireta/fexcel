@@ -1,4 +1,4 @@
-from .fields import ExcelFieldFaker
-from .generator import ExcelFaker
+from .fields import FexcelField
+from .generator import Fexcel
 
-__all__ = ["ExcelFaker", "ExcelFieldFaker"]
+__all__ = ["Fexcel", "FexcelField"]

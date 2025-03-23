@@ -1,11 +1,11 @@
 from faker import Faker
 
-from fexcel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import FexcelField
 
 fake = Faker()
 
 
-class BooleanFieldFaker(ExcelFieldFaker, faker_types=["bool", "boolean"]):
+class BooleanFieldFaker(FexcelField, faker_types=["bool", "boolean"]):
     def __init__(
         self,
         field_name: str,

@@ -10,7 +10,7 @@ import pytest
 from fexcel.fields import (
     DateFieldFaker,
     DateTimeFieldFaker,
-    ExcelFieldFaker,
+    FexcelField,
 )
 from fexcel.fields.numeric import FloatFieldFaker
 
@@ -18,20 +18,20 @@ from fexcel.fields.numeric import FloatFieldFaker
 
 # fmt: off
 numeric_field_sample = [
-    ExcelFieldFaker.parse_field("IntegerField", "int"),
-    ExcelFieldFaker.parse_field("IntegerField", "int", min_value=0),
-    ExcelFieldFaker.parse_field("IntegerField", "int", max_value=100),
-    ExcelFieldFaker.parse_field("IntegerField", "int", min_value=0, max_value=100),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float"),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", min_value=0),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", max_value=100.0),
-    ExcelFieldFaker.parse_field("FloatingPointField", "float", min_value= 0, max_value=100),
+    FexcelField.parse_field("IntegerField", "int"),
+    FexcelField.parse_field("IntegerField", "int", min_value=0),
+    FexcelField.parse_field("IntegerField", "int", max_value=100),
+    FexcelField.parse_field("IntegerField", "int", min_value=0, max_value=100),
+    FexcelField.parse_field("FloatingPointField", "float"),
+    FexcelField.parse_field("FloatingPointField", "float", min_value=0),
+    FexcelField.parse_field("FloatingPointField", "float", max_value=100.0),
+    FexcelField.parse_field("FloatingPointField", "float", min_value= 0, max_value=100),
 ]
 # fmt: on
 
 
 @pytest.mark.parametrize("field", numeric_field_sample)
-def test_numeric_constraint(field: ExcelFieldFaker) -> None:
+def test_numeric_constraint(field: FexcelField) -> None:
     assert isinstance(field, FloatFieldFaker)
     assert float(field.get_value()) >= field.min_value
     assert float(field.get_value()) <= field.max_value
@@ -39,20 +39,20 @@ def test_numeric_constraint(field: ExcelFieldFaker) -> None:
 
 # fmt: off
 temporal_field_sample = [
-    ExcelFieldFaker.parse_field("DateField", "date"),
-    ExcelFieldFaker.parse_field("DateField", "date", start_date="2023-01-01"),
-    ExcelFieldFaker.parse_field("DateField", "date", end_date="2023-12-31"),
-    ExcelFieldFaker.parse_field("DateField", "date", start_date="2023-01-01", end_date="2023-12-31"),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime"),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", start_date="2023-01-01"),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", end_date="2023-12-31"),
-    ExcelFieldFaker.parse_field("DateTimeField", "datetime", start_date="2023-01-01", end_date="2023-12-31"),
+    FexcelField.parse_field("DateField", "date"),
+    FexcelField.parse_field("DateField", "date", start_date="2023-01-01"),
+    FexcelField.parse_field("DateField", "date", end_date="2023-12-31"),
+    FexcelField.parse_field("DateField", "date", start_date="2023-01-01", end_date="2023-12-31"),
+    FexcelField.parse_field("DateTimeField", "datetime"),
+    FexcelField.parse_field("DateTimeField", "datetime", start_date="2023-01-01"),
+    FexcelField.parse_field("DateTimeField", "datetime", end_date="2023-12-31"),
+    FexcelField.parse_field("DateTimeField", "datetime", start_date="2023-01-01", end_date="2023-12-31"),
 ]
 # fmt: on
 
 
 @pytest.mark.parametrize("field", temporal_field_sample)
-def test_temporal_constraint(field: ExcelFieldFaker) -> None:
+def test_temporal_constraint(field: FexcelField) -> None:
     assert isinstance(field, DateFieldFaker | DateTimeFieldFaker)
 
     if field.start_date is not None:
@@ -66,7 +66,7 @@ def test_temporal_constraint(field: ExcelFieldFaker) -> None:
 def test_choice_constraint() -> None:
     allowed_values = ["A", "B", "C"]
 
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         field_name="ChoiceField",
         field_type="choice",
         allowed_values=allowed_values,
@@ -81,13 +81,13 @@ def test_choice_constraint() -> None:
 
 @dataclass
 class DistributionTestCase:
-    input: ExcelFieldFaker
+    input: FexcelField
     expected_distribution: Callable[..., float]
 
 
 numeric_distributions_sample = [
     DistributionTestCase(
-        input=ExcelFieldFaker.parse_field(
+        input=FexcelField.parse_field(
             field_name="IntegerField",
             field_type="int",
             min_value=0,
@@ -97,7 +97,7 @@ numeric_distributions_sample = [
         expected_distribution=random.uniform,
     ),
     DistributionTestCase(
-        input=ExcelFieldFaker.parse_field(
+        input=FexcelField.parse_field(
             field_name="IntegerField",
             field_type="int",
             mean=0,
@@ -107,7 +107,7 @@ numeric_distributions_sample = [
         expected_distribution=random.normalvariate,
     ),
     DistributionTestCase(
-        input=ExcelFieldFaker.parse_field(
+        input=FexcelField.parse_field(
             field_name="FloatField",
             field_type="float",
             mean=0,
@@ -117,7 +117,7 @@ numeric_distributions_sample = [
         expected_distribution=random.gauss,
     ),
     DistributionTestCase(
-        input=ExcelFieldFaker.parse_field(
+        input=FexcelField.parse_field(
             field_name="FloatField",
             field_type="float",
             mean=0,
@@ -190,7 +190,7 @@ invalid_numeric_distributions_sample = [
 @pytest.mark.parametrize("test_case", invalid_numeric_distributions_sample)
 def test_numeric_distributions_invalid(test_case: InvalidDistributionTestCase) -> None:
     with pytest.raises(ValueError, match=test_case.expected_exception_match):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="IntegerField",
             field_type="int",
             **test_case.constraints,
@@ -201,7 +201,7 @@ def test_choice_distributions() -> None:
     allowed_values = ["A", "B", "C"]
     max_range = 1000
 
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         field_name="ChoiceField",
         field_type="choice",
         allowed_values=allowed_values,
@@ -222,7 +222,7 @@ def test_invalid_choice_distribution() -> None:
 
     probabilities = [0.5, 0.5, 0.5]
     with pytest.raises(ValueError, match=r"Probabilities must sum up to 1, got .*"):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="ChoiceField",
             field_type="choice",
             allowed_values=allowed_values,
@@ -231,7 +231,7 @@ def test_invalid_choice_distribution() -> None:
 
     probabilities = [-1]
     with pytest.raises(ValueError, match=r"Probabilities must be positive, got .*"):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="ChoiceField",
             field_type="choice",
             allowed_values=allowed_values,
@@ -242,7 +242,7 @@ def test_invalid_choice_distribution() -> None:
         ValueError,
         match=r"Probabilities must have the same length as 'allowed_values' or less.*",
     ):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="ChoiceField",
             field_type="choice",
             allowed_values=allowed_values,
@@ -253,7 +253,7 @@ def test_invalid_choice_distribution() -> None:
 def test_boolean_distributions() -> None:
     max_range = 100
 
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         field_name="BooleanField",
         field_type="bool",
         probability=0,
@@ -262,7 +262,7 @@ def test_boolean_distributions() -> None:
     assert random_sample.count(str(True)) == 0
     assert random_sample.count(str(False)) == max_range
 
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         field_name="BooleanField",
         field_type="bool",
         probability=1,
@@ -271,7 +271,7 @@ def test_boolean_distributions() -> None:
     assert random_sample.count(str(True)) == max_range
     assert random_sample.count(str(False)) == 0
 
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         field_name="BooleanField",
         field_type="bool",
         probability=0.5,
@@ -288,7 +288,7 @@ def test_invalid_boolean_distribution() -> None:
         ValueError,
         match=r"Probability must be between 0 and 1, got .*",
     ):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="BooleanField",
             field_type="bool",
             probability=-1,
@@ -297,7 +297,7 @@ def test_invalid_boolean_distribution() -> None:
         ValueError,
         match=r"Probability must be between 0 and 1, got .*",
     ):
-        ExcelFieldFaker.parse_field(
+        FexcelField.parse_field(
             field_name="BooleanField",
             field_type="bool",
             probability=2,

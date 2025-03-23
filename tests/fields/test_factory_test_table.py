@@ -7,7 +7,7 @@ from fexcel.fields import (
     DateFieldFaker,
     DateTimeFieldFaker,
     EmailFieldFaker,
-    ExcelFieldFaker,
+    FexcelField,
     FloatFieldFaker,
     IntegerFieldFaker,
     IPv4FieldFaker,
@@ -30,7 +30,7 @@ class Input:
 
 @dataclass
 class Output:
-    type: type[ExcelFieldFaker]
+    type: type[FexcelField]
     pattern: str
 
 
