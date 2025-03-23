@@ -3,14 +3,15 @@ import re
 from collections.abc import Iterator
 from pathlib import Path
 
+import pyexcel as pe
 import pytest
 
 from fexcel.fields import FexcelField
 from fexcel.generator import Fexcel
 
 
-def test_create_fake_excel(schemas_path: Path) -> None:
-    with (schemas_path / "mock-values.json").open("r") as f:
+def test_create_fake_excel(input_path: Path) -> None:
+    with (input_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
 
     excel_faker = Fexcel(json_schema)
@@ -64,12 +65,12 @@ def test_field_parsing(fields: list) -> None:
     assert all(isinstance(field, FexcelField) for field in excel_faker.fields)
 
 
-def test_create_from_file(schemas_path: Path) -> None:
-    with (schemas_path / "mock-values.json").open("r") as f:
+def test_create_from_file(input_path: Path) -> None:
+    with (input_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
     expected_faker = Fexcel(json_schema)
 
-    actual_faker = Fexcel.from_file(schemas_path / "mock-values.json")
+    actual_faker = Fexcel.from_file(input_path / "mock-values.json")
 
     assert isinstance(actual_faker, Fexcel)
     assert actual_faker == expected_faker
@@ -105,3 +106,23 @@ def test_print_excel_faker() -> None:
         r"\)",
     )
     assert re.match(expected, str(faker))
+
+
+def test_write_to_file(output_path: Path) -> None:
+    output_file = output_path / "out.xlsx"
+    if output_file.exists():
+        output_file.unlink()
+
+    fields = [
+        {"name": "field1", "type": "text"},
+        {"name": "field2", "type": "int"},
+        {"name": "field3", "type": "bool"},
+    ]
+    faker = Fexcel(fields)
+    faker.write_to_file(output_file)
+
+    assert output_file.exists()
+    assert output_file.is_file()
+
+    sheet = pe.get_sheet(file_name=str(output_file), sheet_name="Sheet1")
+    assert set(sheet.colnames) == {"field1", "field2", "field3"}
