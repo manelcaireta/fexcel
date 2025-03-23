@@ -25,7 +25,10 @@ class FexcelField(ABC):
             faker_types = [faker_types]
         for faker_type in faker_types:
             _faker_type = faker_type.lower()
-            if _faker_type in cls._fakers:
+            if (
+                _faker_type in cls._fakers
+                and faker_subclass != cls._fakers[_faker_type]
+            ):
                 msg = f"Field type {_faker_type} already registered"
                 raise ValueError(msg)
             cls._fakers[_faker_type.lower()] = faker_subclass
