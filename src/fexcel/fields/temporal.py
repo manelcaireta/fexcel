@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from faker import Faker
 
-from fake_excel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import ExcelFieldFaker
 
 fake = Faker()
 

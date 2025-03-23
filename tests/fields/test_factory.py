@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from fake_excel.fields import ExcelFieldFaker
+from fexcel.fields import ExcelFieldFaker
 from tests.fields.test_factory_test_table import FactoryTestCase, test_cases
 
 

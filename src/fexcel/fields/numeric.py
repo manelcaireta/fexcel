@@ -3,7 +3,7 @@ from functools import partial
 
 from faker import Faker
 
-from fake_excel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import ExcelFieldFaker
 
 fake = Faker()
 INFINITY = 1e30

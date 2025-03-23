@@ -3,7 +3,7 @@ from itertools import repeat
 from pathlib import Path
 from typing import Any, Iterator, Self
 
-from fake_excel.fields import ExcelFieldFaker
+from fexcel.fields import ExcelFieldFaker
 
 
 class ExcelFaker:

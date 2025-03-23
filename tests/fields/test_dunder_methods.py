@@ -1,4 +1,4 @@
-from fake_excel.fields import ExcelFieldFaker
+from fexcel.fields import ExcelFieldFaker
 
 
 def test_field_faker__eq__() -> None:

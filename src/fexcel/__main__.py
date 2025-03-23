@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pydantic import BaseModel, ConfigDict
 from pyexcel import isave_as
 
-from fake_excel.generator import ExcelFaker
+from fexcel.generator import ExcelFaker
 
 
 class Args(BaseModel):

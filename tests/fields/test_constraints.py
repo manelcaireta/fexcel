@@ -7,12 +7,12 @@ from typing import Callable
 
 import pytest
 
-from fake_excel.fields import (
+from fexcel.fields import (
     DateFieldFaker,
     DateTimeFieldFaker,
     ExcelFieldFaker,
 )
-from fake_excel.fields.numeric import FloatFieldFaker
+from fexcel.fields.numeric import FloatFieldFaker
 
 # SIMPLE CONSTRAINT TESTS
 

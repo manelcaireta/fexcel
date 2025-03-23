@@ -2,7 +2,7 @@ from uuid import uuid4
 
 import pytest
 
-from fake_excel.fields import ExcelFieldFaker
+from fexcel.fields import ExcelFieldFaker
 
 
 def test_field_registration() -> None:

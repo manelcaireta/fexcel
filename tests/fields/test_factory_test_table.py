@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from fake_excel.fields import (
+from fexcel.fields import (
     AddressFieldFaker,
     BooleanFieldFaker,
     ChoiceFieldFaker,
