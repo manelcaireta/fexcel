@@ -37,11 +37,11 @@ class FexcelField(ABC):
         self.name = field_name
 
     def __init_subclass__(cls, *, faker_types: str | list[str]) -> None:
-        cls.register_subclass(faker_types, cls)
+        cls.register_faker(faker_types, cls)
         return super().__init_subclass__()
 
     @classmethod
-    def register_subclass(
+    def register_faker(
         cls,
         faker_types: str | list[str],
         faker_subclass: type["FexcelField"],

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Manel Caireta", email = "m.caireta@altostratus.es" }]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "faker>=36.2.2",
     "pydantic>=2.10.6",
