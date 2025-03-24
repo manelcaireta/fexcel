@@ -1,6 +1,8 @@
 import json
 import re
+import types
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 import pyexcel as pe
@@ -8,6 +10,32 @@ import pytest
 
 from fexcel.fields import FexcelField
 from fexcel.generator import Fexcel
+
+try:
+    import pyexcel_xlsx  # type: ignore[reportMissingImports]
+except ImportError:
+    pyexcel_xlsx = None
+
+try:
+    import pyexcel_xls  # type: ignore[reportMissingImports]
+except ImportError:
+    pyexcel_xls = None
+
+try:
+    import pyexcel_ods3  # type: ignore[reportMissingImports]
+except ImportError:
+    pyexcel_ods3 = None
+
+try:
+    import pyexcel_io  # type: ignore[reportMissingImports]
+except ImportError:
+    pyexcel_io = None
+
+try:
+    import chardet  # type: ignore[reportMissingImports]
+    import pyexcel_io  # type: ignore[reportMissingImports]
+except ImportError:
+    chardet = None
 
 
 def test_create_fake_excel(input_path: Path) -> None:
@@ -108,8 +136,30 @@ def test_print_excel_faker() -> None:
     assert re.match(expected, str(faker))
 
 
-def test_write_to_file(output_path: Path) -> None:
-    output_file = output_path / "out.xlsx"
+@dataclass
+class WriteToFileCase:
+    extension: str
+    module: types.ModuleType | None
+
+
+write_to_file_cases = [
+    WriteToFileCase(extension="xlsx", module=pyexcel_xlsx),
+    WriteToFileCase(extension="xls", module=pyexcel_xls),
+    WriteToFileCase(extension="ods", module=pyexcel_ods3),
+    WriteToFileCase(extension="csv", module=pyexcel_io),
+    WriteToFileCase(extension="tsv", module=pyexcel_io),
+    WriteToFileCase(extension="csvz", module=chardet),
+    WriteToFileCase(extension="tsvz", module=chardet),
+]
+
+
+@pytest.mark.parametrize("tt", write_to_file_cases)
+def test_write_to_file(output_path: Path, tt: WriteToFileCase) -> None:
+    if tt.module is None:
+        pytest.skip(f"Plugin to handle {tt.extension} is not installed")
+
+    output_file = output_path / f"out.{tt.extension}"
+
     if output_file.exists():
         output_file.unlink()
 
@@ -126,7 +176,6 @@ def test_write_to_file(output_path: Path) -> None:
 
     sheet = pe.get_sheet(
         file_name=str(output_file),
-        sheet_name="Sheet1",
         name_columns_by_row=0,
     )
     assert set(sheet.colnames) == {"field1", "field2", "field3"}
