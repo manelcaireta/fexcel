@@ -2,12 +2,12 @@ from datetime import datetime, timezone
 
 from faker import Faker
 
-from fake_excel.fields.base import ExcelFieldFaker
+from fexcel.fields.base import FexcelField
 
 fake = Faker()
 
 
-class DateTimeFieldFaker(ExcelFieldFaker, faker_types=["datetime", "timestamp"]):
+class DateTimeFieldFaker(FexcelField, faker_types=["datetime", "timestamp"]):
     def __init__(
         self,
         field_name: str,
@@ -64,6 +64,6 @@ class DateFieldFaker(DateTimeFieldFaker, faker_types="date"):
         return self.random_datetime().date().strftime(self.format_string)
 
 
-class TimeFieldFaker(ExcelFieldFaker, faker_types="time"):
+class TimeFieldFaker(FexcelField, faker_types="time"):
     def get_value(self) -> str:
         return fake.time()

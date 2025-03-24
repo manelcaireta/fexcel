@@ -1,16 +1,18 @@
 [project]
-name = "fake-excel"
+name = "fexcel"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Manel Caireta", email = "m.caireta@altostratus.es" }]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "faker>=36.2.2",
-    "pydantic>=2.10.6",
     "pyexcel>=0.7.1",
     "pyexcel-xlsx>=0.6.1",
 ]
+
+[project.scripts]
+fexcel = "fexcel.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -24,4 +26,4 @@ dev = [
 ]
 
 [tool.coverage.report]
-exclude_also = ["if __name__ == .__main__.:", "def main"]
+exclude_also = ["if __name__ == .__main__.:", "def main", "@abstractmethod"]

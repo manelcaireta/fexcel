@@ -1,6 +1,6 @@
 import pytest
 
-from fake_excel.__main__ import Args, parse_args
+from fexcel.__main__ import Args, parse_args
 
 
 def test_parse_valid_arguments() -> None:

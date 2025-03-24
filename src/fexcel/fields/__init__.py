@@ -1,4 +1,4 @@
-from .base import ExcelFieldFaker
+from .base import FexcelField
 from .boolean import BooleanFieldFaker
 from .choice import ChoiceFieldFaker
 from .network import IPv4FieldFaker, IPv6FieldFaker, URLFieldFaker
@@ -21,7 +21,7 @@ __all__ = [
     "DateFieldFaker",
     "DateTimeFieldFaker",
     "EmailFieldFaker",
-    "ExcelFieldFaker",
+    "FexcelField",
     "FloatFieldFaker",
     "IPv4FieldFaker",
     "IPv6FieldFaker",

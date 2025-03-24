@@ -2,15 +2,15 @@ import re
 
 import pytest
 
-from fake_excel.fields import ExcelFieldFaker
-from tests.fields.test_factory_test_table import FactoryTestCase, test_cases
+from fexcel.fields import FexcelField
+from tests.fexcel_fields.test_factory_test_table import FactoryTestCase, test_cases
 
 
 # NOTE: As this test is fairly fast, we apply it 5 times to catch possible pattern
 # pattern errors that pass the first time.
 @pytest.mark.parametrize("tt", test_cases * 5)
 def test_field_faker_factory(tt: FactoryTestCase) -> None:
-    field_faker = ExcelFieldFaker.parse_field(
+    field_faker = FexcelField.parse_field(
         tt.input.name,
         tt.input.type,
     )
@@ -25,4 +25,4 @@ def test_field_faker_factory_invalid_type() -> None:
     invalid_type = "INVALID_TYPE"
 
     with pytest.raises(ValueError, match=f"Unknown field type: {invalid_type.lower()}"):
-        ExcelFieldFaker.parse_field("Test", invalid_type)
+        FexcelField.parse_field("Test", invalid_type)

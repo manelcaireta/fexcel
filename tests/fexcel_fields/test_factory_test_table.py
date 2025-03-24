@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 
-from fake_excel.fields import (
+from fexcel.fields import (
     AddressFieldFaker,
     BooleanFieldFaker,
     ChoiceFieldFaker,
     DateFieldFaker,
     DateTimeFieldFaker,
     EmailFieldFaker,
-    ExcelFieldFaker,
+    FexcelField,
     FloatFieldFaker,
     IntegerFieldFaker,
     IPv4FieldFaker,
@@ -30,7 +30,7 @@ class Input:
 
 @dataclass
 class Output:
-    type: type[ExcelFieldFaker]
+    type: type[FexcelField]
     pattern: str
 
 
