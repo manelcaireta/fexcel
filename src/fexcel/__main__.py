@@ -1,17 +1,23 @@
 import sys
-from argparse import ArgumentParser
-
-from pydantic import BaseModel, ConfigDict
+from argparse import ArgumentParser, Namespace
+from dataclasses import dataclass
 
 from fexcel.generator import Fexcel
 
 
-class Args(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
+@dataclass
+class Args:
     schema_path: str
     output_path: str
     num_fakes: int
+
+    @classmethod
+    def from_namespace(cls, namespace: Namespace) -> "Args":
+        return cls(
+            schema_path=namespace.schema_path,
+            output_path=namespace.output_path,
+            num_fakes=namespace.num_fakes,
+        )
 
 
 def main() -> None:
@@ -32,7 +38,7 @@ def parse_args(args: list[str] = sys.argv[1:]) -> Args:
         help="Number of fake records to generate",
     )
 
-    return Args.model_validate(parser.parse_args(args))
+    return Args.from_namespace(parser.parse_args(args))
 
 
 if __name__ == "__main__":
