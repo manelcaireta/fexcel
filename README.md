@@ -2,12 +2,10 @@
 
 A simple mock excel generator. `fexcel` reads a `JSON` file declaring the excel schema to use and creates a new excel file with said configuration.
 
-> [!NOTE]
-> Currently only `.xlsx` files are supported
-
 ## Content <!-- omit from toc -->
 
 - [Installation](#installation)
+- [Plugins](#plugins)
 - [Usage](#usage)
   - [CLI](#cli)
   - [API](#api)
@@ -31,6 +29,28 @@ check the installation was successful
 
 ```sh
 fexcel --help
+```
+
+## Plugins
+
+`fexcel` relies on [`faker`](https://pypi.org/project/Faker/) to generate quality mock data and [`pyexcel`](https://docs.pyexcel.org/en/latest/) for excel file handling.
+
+As `pyexcel` has a plugin structure, `fexcel` has a plugin structure too, and to work with each different kind of file a dedicated `pyexcel` plugin should be installed.
+
+As a commodity, several extras can be installed alongside `fexcel` to work with the most usual file type (based on [`pyexcel`](https://docs.pyexcel.org/en/latest/#id3) own plugin table). The following table lists them:
+
+| extra | file types                          |
+| ----- | ----------------------------------- |
+| csv   | `.csv`, `.tsv`, `.csvz` and `.tsvz` |
+| xls   | `.xls`                              |
+| xlsx  | `.xlsx`                             |
+| ods   | `.ods`                              |
+| all   | All of the above                    |
+
+Therefore, to handle `.xlsx` files you would install `fexcel` as
+
+```
+pip install 'fexcel[xlsx]'
 ```
 
 ## Usage
@@ -77,6 +97,7 @@ Fexcel expects to have its schema defined in a JSON file with the following stru
   }
 ]
 ```
+
 - The `name` attribute defines how the final excel field will be named.
 - The `type` attribute specifies the data type of the field.
 - The `constraints` attribute specifies a set of key-value pairs to customize how the data will be generated.
