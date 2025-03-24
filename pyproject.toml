@@ -8,11 +8,32 @@ requires-python = ">=3.10"
 dependencies = [
     "faker>=36.2.2",
     "pyexcel>=0.7.1",
-    "pyexcel-xlsx>=0.6.1",
 ]
 
 [project.scripts]
 fexcel = "fexcel.__main__:main"
+
+[project.optional-dependencies]
+xls = [
+    "pyexcel-xls>=0.7.1",
+]
+xlsx = [
+    "pyexcel-xlsx>=0.6.1",
+]
+ods = [
+    "pyexcel-ods3>=0.6.1",
+]
+csv = [
+    "chardet>=5.2.0",
+    "pyexcel-io>=0.6.7",
+]
+all = [
+    "chardet>=5.2.0",
+    "pyexcel-io>=0.6.7",
+    "pyexcel-ods3>=0.6.1",
+    "pyexcel-xls>=0.7.1",
+    "pyexcel-xlsx>=0.6.1",
+]
 
 [build-system]
 requires = ["hatchling"]
