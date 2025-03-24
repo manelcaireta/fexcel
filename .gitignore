@@ -1,4 +1,4 @@
-*.xlsx
+tests/data/outputs
 .coverage
 .vscode
 
