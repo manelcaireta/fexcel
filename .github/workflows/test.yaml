@@ -18,6 +18,9 @@ jobs:
           args: "format --check --diff"
 
   test:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     strategy:
       matrix:
