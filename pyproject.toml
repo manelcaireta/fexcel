@@ -1,7 +1,7 @@
 [project]
 name = "fexcel"
 version = "0.0.1"
-description = "Add your description here"
+description = "A simple Excel files mocker based on faker and pyexcel"
 readme = "README.md"
 authors = [{ name = "Manel Caireta", email = "m.caireta@altostratus.es" }]
 requires-python = ">=3.10"
