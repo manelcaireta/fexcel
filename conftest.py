@@ -27,6 +27,8 @@ def output_path(data_path: Path) -> Path:
 
 @pytest.fixture(scope="session")
 def random_field_sample() -> list[dict[str, str]]:
+    max_fields = 250
+
     text_fields = [
         {"name": f"Text-{i}", "type": "text"} for i in range(random.randint(1, 100))
     ]
@@ -43,4 +45,8 @@ def random_field_sample() -> list[dict[str, str]]:
         {"name": f"Date-{i}", "type": "date"} for i in range(random.randint(1, 100))
     ]
 
-    return text_fields + int_fields + bool_fields + float_fields + date_fields
+    fields = text_fields + int_fields + bool_fields + float_fields + date_fields
+    fields = sorted(fields, key=lambda _: random.random())
+    if len(fields) > max_fields:
+        fields = fields[:max_fields]
+    return fields
