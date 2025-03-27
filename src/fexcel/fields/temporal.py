@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Any
 
 from faker import Faker
 
@@ -15,7 +16,10 @@ class DateTimeFieldFaker(FexcelField, faker_types=["datetime", "timestamp"]):
         start_date: str | datetime | None = None,
         end_date: str | datetime | None = None,
         format_string: str = "%Y-%m-%d %H:%M:%S",
+        **kwargs: Any,
     ) -> None:
+        super().__init__(field_name, **kwargs)
+
         self.format_string = format_string
 
         if isinstance(start_date, str):
@@ -25,8 +29,6 @@ class DateTimeFieldFaker(FexcelField, faker_types=["datetime", "timestamp"]):
         if isinstance(end_date, str):
             end_date = self._ensure_datetime(end_date, "end_date")
         self.end_date = end_date
-
-        super().__init__(field_name)
 
     def _ensure_datetime(self, value: str, var_name: str) -> datetime | None:
         try:
