@@ -7,7 +7,7 @@ fake = Faker()
 
 class TextFieldFaker(FexcelField, faker_types=["text", "string"]):
     def get_value(self) -> str:
-        return fake.text()
+        return fake.text().replace("\n", " ")
 
 
 class NameFieldFaker(FexcelField, faker_types="name"):
@@ -27,7 +27,7 @@ class PhoneFieldFaker(FexcelField, faker_types="phone"):
 
 class AddressFieldFaker(FexcelField, faker_types="address"):
     def get_value(self) -> str:
-        return fake.address()
+        return fake.address().replace("\n", " ")
 
 
 class UUIDFieldFaker(FexcelField, faker_types="uuid"):
