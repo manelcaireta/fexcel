@@ -7,13 +7,6 @@ from faker import Faker
 from fexcel.fields.base import FexcelField
 
 fake = Faker()
-INFINITY = 1e30
-"""
-A very large number but not large enough to mess with RNGs.
-
-Using something like `sys.float_info.max` or `math.inf` can make the RNGs respond
-with `math.inf`.
-"""
 
 
 class FloatFieldFaker(FexcelField, faker_types="float"):
@@ -37,8 +30,8 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
         self.is_mean_std = bool(mean is not None or std is not None)
         self.distribution = distribution or "uniform"
 
-        self.min_value = self._ensure_float(min_value, "min_value", -INFINITY)
-        self.max_value = self._ensure_float(max_value, "max_value", INFINITY)
+        self.min_value = self._ensure_float(min_value, "min_value", 0)
+        self.max_value = self._ensure_float(max_value, "max_value", 100)
         self.mean = self._ensure_float(mean, "mean", 0)
         self.std = self._ensure_float(std, "std", 1)
 
