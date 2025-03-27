@@ -135,8 +135,8 @@ The possible constraints are
 | constraint   | description                                                                             | values                                        |
 | :----------- | :-------------------------------------------------------------------------------------- | --------------------------------------------- |
 | distribution | Statistic distribution of the data                                                      | `uniform` (default), `normal`, or `lognormal` |
-| min_value    | Lower bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `-1e30`            |
-| max_value    | Upper bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `1e30`             |
+| min_value    | Lower bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `0`            |
+| max_value    | Upper bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `100`             |
 | mean         | Mean value for `normal` or `lognormal` distributions                                    | numeric value, defaults to `0`                |
 | std          | Standard deviation for `normal` or `lognormal` distributions                            | numeric value, defaults to `1`                |
 
