@@ -105,6 +105,12 @@ class Fexcel:
             dest_file_name=str(file_path),
             sheet_name=sheet_name,
         )
+        sheet = pe.get_sheet(
+            file_name=str(file_path),
+            name_columns_by_row=0,
+        )
+        sheet = sheet.project([field.name for field in self.fields])
+        sheet.save_as(str(file_path))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Fexcel):

@@ -21,7 +21,7 @@ class ChoiceFieldFaker(FexcelField, faker_types="choice"):
         self.probabilities = self._parse_probabilities(probabilities)
 
     def get_value(self) -> str:
-        choice = random.choices(  # noqa: S311
+        choice = random.choices(
             population=self.allowed_values,
             weights=self.probabilities,
         )
