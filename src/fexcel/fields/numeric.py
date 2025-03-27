@@ -57,10 +57,7 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
             try:
                 return float(value)
             except (ValueError, TypeError) as err:
-                msg = (
-                    f"Invalid '{var_name}': "
-                    f"Unable to convert '{value}' to float"
-                )
+                msg = f"Invalid '{var_name}': Unable to convert '{value}' to float"
                 raise ValueError(msg) from err
         return value
 
