@@ -36,6 +36,7 @@ def test_numeric_constraint(field: FexcelField) -> None:
     assert float(field.get_value()) >= field.min_value
     assert float(field.get_value()) <= field.max_value
 
+
 def test_invalid_numeric_constraint() -> None:
     with pytest.raises(ValueError, match=r"Invalid min_value"):
         FexcelField.parse_field("IntegerField", "int", min_value="FAIL")
