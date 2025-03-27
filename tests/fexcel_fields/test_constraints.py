@@ -36,6 +36,10 @@ def test_numeric_constraint(field: FexcelField) -> None:
     assert float(field.get_value()) >= field.min_value
     assert float(field.get_value()) <= field.max_value
 
+def test_invalid_numeric_constraint() -> None:
+    with pytest.raises(ValueError, match=r"Invalid min_value"):
+        FexcelField.parse_field("IntegerField", "int", min_value="FAIL")
+
 
 # fmt: off
 temporal_field_sample = [
@@ -61,6 +65,11 @@ def test_temporal_constraint(field: FexcelField) -> None:
     if field.end_date is not None:
         got = datetime.strptime(field.get_value(), field.format_string)
         assert got.astimezone(timezone.utc) <= field.end_date.astimezone(timezone.utc)
+
+
+def test_invalid_temporal_constraint() -> None:
+    with pytest.raises(ValueError, match=r"Invalid start_date"):
+        FexcelField.parse_field("DateField", "datetime", start_date="FAIL")
 
 
 def test_choice_constraint() -> None:
