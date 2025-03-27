@@ -19,14 +19,24 @@ class DateTimeFieldFaker(FexcelField, faker_types=["datetime", "timestamp"]):
         self.format_string = format_string
 
         if isinstance(start_date, str):
-            start_date = self._try_parse_datetime(start_date)
+            start_date = self._ensure_datetime(start_date, "start_date")
         self.start_date = start_date
 
         if isinstance(end_date, str):
-            end_date = self._try_parse_datetime(end_date)
+            end_date = self._ensure_datetime(end_date, "end_date")
         self.end_date = end_date
 
         super().__init__(field_name)
+
+    def _ensure_datetime(self, value: str, var_name: str) -> datetime | None:
+        try:
+            self._try_parse_datetime(value)
+        except ValueError as err:
+            msg = (
+                f"Invalid {var_name}: {value}. A Date or Datetime "
+                "can only be in ISO601 or with a user provided format string"
+            )
+            raise ValueError(msg) from err
 
     def _try_parse_datetime(self, value: str) -> datetime | None:
         try:

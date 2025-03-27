@@ -45,9 +45,6 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
         self._raise_if_invalid_combination()
         self._resolve_rng()
 
-    def get_value(self) -> str:
-        return str(self.rng())
-
     @staticmethod
     def _ensure_float(
         value: float | str | None,
@@ -60,7 +57,10 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
             try:
                 return float(value)
             except (ValueError, TypeError) as err:
-                msg = f"Invalid {var_name}: {value}"
+                msg = (
+                    f"Invalid {var_name}: "
+                    f"Unable to convert {var_name} to float: {value}"
+                )
                 raise ValueError(msg) from err
         return value
 
@@ -97,6 +97,9 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
             case _:
                 msg = f"Invalid distribution: {self.distribution} for field {self.name}"
                 raise ValueError(msg)
+
+    def get_value(self) -> str:
+        return str(self.rng())
 
 
 # NOTE: If Python allows `int` to be treated as a `float` then I will too
