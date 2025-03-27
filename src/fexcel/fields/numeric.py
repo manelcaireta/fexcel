@@ -1,5 +1,6 @@
 import random
 from functools import partial
+from typing import Any
 
 from faker import Faker
 
@@ -28,22 +29,40 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
         mean: float | None = None,
         std: float | None = None,
         distribution: str | None = None,
+        **kwargs: Any,
     ) -> None:
+        super().__init__(field_name, **kwargs)
+
         self.is_min_max = bool(min_value is not None or max_value is not None)
         self.is_mean_std = bool(mean is not None or std is not None)
         self.distribution = distribution or "uniform"
-        self.min_value = min_value if min_value is not None else -INFINITY
-        self.max_value = max_value if max_value is not None else INFINITY
-        self.mean = mean if mean is not None else 0
-        self.std = std if std is not None else 1
+
+        self.min_value = self._ensure_float(min_value, "min_value", -INFINITY)
+        self.max_value = self._ensure_float(max_value, "max_value", INFINITY)
+        self.mean = self._ensure_float(mean, "mean", 0)
+        self.std = self._ensure_float(std, "std", 1)
 
         self._raise_if_invalid_combination()
         self._resolve_rng()
 
-        super().__init__(field_name)
-
     def get_value(self) -> str:
         return str(self.rng())
+
+    @staticmethod
+    def _ensure_float(
+        value: float | str | None,
+        var_name: str,
+        default: float,
+    ) -> float:
+        if value is None:
+            return default
+        if not isinstance(value, float):
+            try:
+                return float(value)
+            except (ValueError, TypeError) as err:
+                msg = f"Invalid {var_name}: {value}"
+                raise ValueError(msg) from err
+        return value
 
     def _raise_if_invalid_combination(self) -> None:
         if (self.is_min_max) and (self.is_mean_std):
