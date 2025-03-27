@@ -57,7 +57,18 @@ def test_create_fake_excel(input_path: Path) -> None:
 def test_incorrect_schema() -> None:
     invalid_field = {"": ""}
 
-    with pytest.raises(ValueError, match=f"Unprocessable field {invalid_field}"):
+    with pytest.raises(ValueError, match=f"Error parsing field '{invalid_field}'"):
+        _ = Fexcel([invalid_field])
+
+    invalid_field = {
+        "name": "_",
+        "type": "int",
+        "constraints": {"min_value": "NOT AN INT"},
+    }
+    with pytest.raises(
+        ValueError,
+        match=f"Error parsing field '{invalid_field['name']}'",
+    ):
         _ = Fexcel([invalid_field])
 
 

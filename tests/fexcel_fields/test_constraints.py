@@ -38,7 +38,7 @@ def test_numeric_constraint(field: FexcelField) -> None:
 
 
 def test_invalid_numeric_constraint() -> None:
-    with pytest.raises(ValueError, match=r"Invalid min_value"):
+    with pytest.raises(ValueError, match=r"Invalid 'min_value'"):
         FexcelField.parse_field("IntegerField", "int", min_value="FAIL")
 
 
@@ -69,7 +69,7 @@ def test_temporal_constraint(field: FexcelField) -> None:
 
 
 def test_invalid_temporal_constraint() -> None:
-    with pytest.raises(ValueError, match=r"Invalid start_date"):
+    with pytest.raises(ValueError, match=r"Invalid 'start_date'"):
         FexcelField.parse_field("DateField", "datetime", start_date="FAIL")
 
 
