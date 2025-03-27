@@ -104,6 +104,15 @@ def test_field_parsing(fields: list) -> None:
     assert all(isinstance(field, FexcelField) for field in excel_faker.fields)
 
 
+def test_ordered_field_parsing(random_field_sample: list[dict]) -> None:
+    fexcel = Fexcel(random_field_sample)
+
+    want = [field["name"] for field in random_field_sample]
+    got = [field.name for field in fexcel.fields]
+
+    assert want == got
+
+
 def test_create_from_file(input_path: Path) -> None:
     with (input_path / "mock-values.json").open("r") as f:
         json_schema = json.load(f)
@@ -190,3 +199,30 @@ def test_write_to_file(output_path: Path, tt: WriteToFileCase) -> None:
         name_columns_by_row=0,
     )
     assert set(sheet.colnames) == {"field1", "field2", "field3"}
+
+
+@pytest.mark.parametrize("tt", write_to_file_cases)
+def test_ordered_write(
+    output_path: Path,
+    random_field_sample: list[dict],
+    tt: WriteToFileCase,
+) -> None:
+    if tt.module is None:
+        pytest.skip(f"Plugin to handle {tt.extension} is not installed")
+
+    output_file = output_path / f"ordered.{tt.extension}"
+    if output_file.exists():
+        output_file.unlink()
+
+    fexcel = Fexcel(random_field_sample)
+    fexcel.write_to_file(output_file, 1)
+
+    sheet = pe.get_sheet(
+        file_name=str(output_file),
+        name_columns_by_row=0,
+    )
+
+    want = [field["name"] for field in random_field_sample]
+    got = sheet.colnames
+
+    assert want == got
