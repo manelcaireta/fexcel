@@ -76,7 +76,7 @@ class FloatFieldFaker(FexcelField, faker_types="float"):
             case "lognormal":
                 self.rng = partial(random.lognormvariate, self.mean, self.std)
             case _:
-                msg = f"Invalid distribution: {self.distribution}"
+                msg = f"Invalid distribution: {self.distribution} for field {self.name}"
                 raise ValueError(msg)
 
 
