@@ -35,7 +35,7 @@ class DateTimeFieldFaker(FexcelField, faker_types=["datetime", "timestamp"]):
             self._try_parse_datetime(value)
         except ValueError as err:
             msg = (
-                f"Invalid {var_name}: {value}. A Date or Datetime "
+                f"Invalid '{var_name}': '{value}'. A Date or Datetime "
                 "can only be in ISO601 or with a user provided format string"
             )
             raise ValueError(msg) from err
