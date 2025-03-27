@@ -21,9 +21,13 @@ class Args:
 
 
 def main() -> None:
-    args = parse_args()
-    fexcel = Fexcel.from_file(args.schema_path)
-    fexcel.write_to_file(args.output_path, args.num_fakes)
+    try:
+        args = parse_args()
+        fexcel = Fexcel.from_file(args.schema_path)
+        fexcel.write_to_file(args.output_path, args.num_fakes)
+    except Exception as e:  # noqa: BLE001
+        print(f"fexcel: {e}")
+        sys.exit(1)
 
 
 def parse_args(args: list[str] = sys.argv[1:]) -> Args:

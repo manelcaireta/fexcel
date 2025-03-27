@@ -59,8 +59,11 @@ class Fexcel:
                 field_type=field["type"],
                 **constraints,
             )
+        except ValueError as err:
+            msg = f"Error parsing field '{field['name']}': {err}"
+            raise ValueError(msg) from err
         except KeyError as err:
-            msg = f"Unprocessable field {field}"
+            msg = f"Error parsing field '{field}': {err} key not found"
             raise ValueError(msg) from err
 
     def get_fake_records(self, n: int | None = None) -> Iterator[dict[str, str]]:

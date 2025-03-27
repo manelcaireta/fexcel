@@ -1,5 +1,6 @@
 import random
 from copy import deepcopy
+from typing import Any
 
 from fexcel.fields.base import FexcelField
 
@@ -11,12 +12,13 @@ class ChoiceFieldFaker(FexcelField, faker_types="choice"):
         *,
         allowed_values: list[str] | None = None,
         probabilities: list[float] | None = None,
+        **kwargs: Any,
     ) -> None:
+        super().__init__(field_name, **kwargs)
         self.allowed_values = allowed_values or ["NULL"]
         if not probabilities:
             probabilities = [1 / len(self.allowed_values)] * len(self.allowed_values)
         self.probabilities = self._parse_probabilities(probabilities)
-        super().__init__(field_name)
 
     def get_value(self) -> str:
         choice = random.choices(  # noqa: S311

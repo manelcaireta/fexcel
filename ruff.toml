@@ -67,7 +67,7 @@ select = [
     # "UP",     # pyupgrade
     # "TRY",    # tryceratops
 ]
-ignore = ["ANN401", "LOG015", "LOG002", "E266", "PT023"]
+ignore = ["ANN401", "LOG015", "LOG002", "E266", "PT023", "COM812"]
 fixable = ["ALL"]
 
 [lint.per-file-ignores]
