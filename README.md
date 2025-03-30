@@ -1,21 +1,6 @@
-# Fexcel <!-- omit from toc -->
+# Fexcel
 
 A simple mock excel generator. `fexcel` reads a `JSON` file declaring the excel schema to use and creates a new excel file with said configuration.
-
-## Content <!-- omit from toc -->
-
-- [Installation](#installation)
-- [Plugins](#plugins)
-- [Usage](#usage)
-  - [CLI](#cli)
-  - [API](#api)
-- [Schema](#schema)
-  - [Text Fields](#text-fields)
-  - [Numeric Fields](#numeric-fields)
-  - [Choice Fields](#choice-fields)
-  - [Temporal fields](#temporal-fields)
-  - [Boolean fields](#boolean-fields)
-  - [Network fields](#network-fields)
 
 ## Installation
 
@@ -135,8 +120,8 @@ The possible constraints are
 | constraint   | description                                                                             | values                                        |
 | :----------- | :-------------------------------------------------------------------------------------- | --------------------------------------------- |
 | distribution | Statistic distribution of the data                                                      | `uniform` (default), `normal`, or `lognormal` |
-| min_value    | Lower bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `0`            |
-| max_value    | Upper bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `100`             |
+| min_value    | Lower bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `0`                |
+| max_value    | Upper bound for the field values, can only be specified with the `uniform` distribution | numeric value, defaults to `100`              |
 | mean         | Mean value for `normal` or `lognormal` distributions                                    | numeric value, defaults to `0`                |
 | std          | Standard deviation for `normal` or `lognormal` distributions                            | numeric value, defaults to `1`                |
 
