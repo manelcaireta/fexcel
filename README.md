@@ -16,6 +16,44 @@ check the installation was successful
 fexcel --help
 ```
 
+## Usage
+
+Before using fexcel, a JSON file containing the schema to be used for the fake resulting excel should be created. For example, to create a fake excel with a name and an address you would use
+
+```json
+[
+  {
+    "name": "Employee",
+    "type": "name"
+  },
+  {
+    "name": "Address",
+    "type": "address"
+  }
+]
+```
+
+Then, you would use `fexcel` to create the resulting excel.
+
+### CLI
+
+You can use the command line to create a fake excel based on an existing schema declaration
+
+```sh
+fexcel /path/to/input/schema.json /path/to/output/file.xlsx --num-fakes 100
+```
+
+### API
+
+You can leverage `fexcel`'s main interface `Fexcel` to parse a schema and write the resulting excel in a file as such
+
+```python
+from fexcel import Fexcel
+
+fexcel = Fexcel.from_file("schema.json")
+fexcel.write_to_file("output.xlsx")
+```
+
 ## Plugins
 
 `fexcel` relies on [`faker`](https://pypi.org/project/Faker/) to generate quality mock data and [`pyexcel`](https://docs.pyexcel.org/en/latest/) for excel file handling.
@@ -36,27 +74,6 @@ Therefore, to handle `.xlsx` files you would install `fexcel` as
 
 ```
 pip install 'fexcel[xlsx]'
-```
-
-## Usage
-
-### CLI
-
-You can use the command line to create a fake excel based on an existing schema declaration
-
-```sh
-fexcel /path/to/input/schema.json /path/to/output/file.xlsx --num-fakes 100
-```
-
-### API
-
-You can leverage `fexcel`'s main interface `Fexcel` to parse a schema and write the resulting excel in a file as such
-
-```python
-from fexcel import Fexcel
-
-fexcel = Fexcel.from_file("schema.json")
-fexcel.write_to_file("output.xlsx")
 ```
 
 ## Schema
