@@ -9,6 +9,7 @@ dependencies = [
     "faker>=36.2.2",
     "pyexcel>=0.7.1",
 ]
+keywords = ["fexcel", "excel", "mocking"]
 
 [project.scripts]
 fexcel = "fexcel.__main__:main"
@@ -48,3 +49,4 @@ dev = [
 
 [tool.coverage.report]
 exclude_also = ["if __name__ == .__main__.:", "def main", "@abstractmethod"]
+
