@@ -24,6 +24,10 @@ classifiers = [
 [project.scripts]
 fexcel = "fexcel.__main__:main"
 
+[project.urls]
+Source = "https://github.com/manelcaireta/fexcel.git"
+Issues = "https://github.com/manelcaireta/fexcel/issues"
+
 [project.optional-dependencies]
 xls = [
     "pyexcel-xls>=0.7.1",
